@@ -2,8 +2,12 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as HtmlWebpackTemplate from 'html-webpack-template';
+// import webpack from 'webpack';
+// import path from 'path';
+// import HtmlWebpackPlugin from 'html-webpack-plugin';
+// import HtmlWebpackTemplate from 'html-webpack-template';
 
-// import { AppConstants } from './src/lib/constants';
+import { AppConstants } from './src/lib/constants';
 
 /*
  * Note - Bryant - inspired by:
@@ -13,11 +17,11 @@ import * as HtmlWebpackTemplate from 'html-webpack-template';
  */
 const config: webpack.Configuration[] = [{
   context: path.resolve(__dirname),
-  // entry: [
-  //   'react-hot-loader/patch',
-  //   '.src/client/index.tsx'
-  // ],
-  entry: './src/client/index.tsx',
+  entry: [
+    'react-hot-loader/patch',
+    './src/client/index.tsx'
+  ],
+  // entry: './src/client/index.tsx',
 
   output: {
     path: path.join(__dirname, 'dist'),
@@ -28,6 +32,8 @@ const config: webpack.Configuration[] = [{
   devtool: 'source-map',
 
   resolve: {
+    // TODO: resolve aliases if needed later
+    // alias: {},
     // extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
     extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json']
   },
@@ -37,7 +43,7 @@ const config: webpack.Configuration[] = [{
     new webpack.HotModuleReplacementPlugin(),
     // TODO - is it possible to integrate this with the package.json description?
     new HtmlWebpackPlugin({
-      title: 'Typescript Webpack starter',
+      title: AppConstants.APP_NAME,
       chunksSortMode: 'dependency',
       // HtmlWebpackTemplate is a fancy template
       template: HtmlWebpackTemplate,
@@ -45,8 +51,8 @@ const config: webpack.Configuration[] = [{
       xhtml: true,
 
       // HtmlWebpackTemplate params
-      // appMountId: AppConstants.APP_MOUNT_ID
-      appMountId: 'app'
+      appMountId: AppConstants.APP_MOUNT_ID
+      // appMountId: 'app'
     })
     // new webpack.optimize.DedupePlugin()
   ],
@@ -55,7 +61,7 @@ const config: webpack.Configuration[] = [{
     rules: [
       {
         test: /\.tsx?$/,
-        loaders: [
+        use: [
           'react-hot-loader/webpack',
           'awesome-typescript-loader'
         ],
@@ -70,10 +76,10 @@ const config: webpack.Configuration[] = [{
     ]
   },
 
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  },
+  // externals: {
+  //   'react': 'React',
+  //   'react-dom': 'ReactDOM'
+  // },
 
   devServer: {
     hot: true

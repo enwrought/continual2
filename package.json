@@ -21,11 +21,16 @@
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
     "@types/react-hot-loader": "^3.0.6",
+    "@types/react-router": "^4.0.22",
+    "@types/react-router-dom": "^4.2.4",
+    "@types/react-transition-group": "^2.0.7",
+    "@types/reactstrap": "^5.0.17",
     "@types/webpack": "^3.8.8",
     "@types/webpack-env": "^1.13.5",
     "awesome-typescript-loader": "^3.5.0",
     "html-webpack-plugin": "^2.30.1",
     "html-webpack-template": "^6.1.0",
+    "mocha": "^5.0.1",
     "source-map-loader": "^0.2.3",
     "ts-node": "^5.0.0",
     "typescript": "^2.7.2",
@@ -36,6 +41,10 @@
   "dependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-hot-loader": "^3.1.3"
+    "react-hot-loader": "^3.1.3",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-transition-group": "^2.2.1",
+    "reactstrap": "^4.8.0"
   }
 }
