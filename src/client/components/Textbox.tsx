@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import * as React from 'react';
 
-export default class Textbox extends PureComponent {
+export default class Textbox extends React.PureComponent {
   render() {
     return (
       <div />

@@ -7,7 +7,7 @@ export default class App extends React.PureComponent<{}, {}> {
       <div className="App">
         <ParsingTextbox
           onProcess={value => { console.log(value); }}
-          onSave={() => { return; }}
+          onSave={value => { console.log(`Saved: "${value}"`); }}
         />
       </div>
     );

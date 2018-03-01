@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { Form, FormGroup, Input, Button } from 'reactstrap';
+import Textbox from './Textbox';
+import Hashtag from './Hashtag';
+import * as HashtagHelper from '../../lib/helpers/hashtag';
 
 interface ParsingTextboxProps {
   value?: string;
@@ -41,7 +44,6 @@ export default class ParsingTextbox extends
     );
   }
 
-  // TODO - implement the 500s delay to
   update = (newValue: React.FormEvent<HTMLInputElement>) => {
     const text = newValue.currentTarget.value;
     this.setState({ text }, () => this.updateTimer(text));
@@ -56,12 +58,28 @@ export default class ParsingTextbox extends
   render() {
     const { text } = this.state;
 
+    // TODO - update only after the delay
+    const stuff = HashtagHelper.parseHashtags(text);
+    console.log({stuff});
+    const content = stuff.map((str, index) => {
+      if (str && str.substr(0,1) !== '#') {
+        return str;
+      } else {
+        const [tag, ...subtags] = HashtagHelper.splitHashtag(str) || [''];
+        return <Hashtag tag={tag} subtags={subtags} key={ index } />
+      }
+    })
+
     return (
       <Form>
+        <div>
+          { content }
+        </div>
         <FormGroup>
           <Input type="textarea" value={text} onChange={this.update} />
           <Button onClick={this.onClick}>Save</Button>
         </FormGroup>
+        <Textbox />
       </Form>
     );
   }
