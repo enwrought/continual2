@@ -75,13 +75,13 @@ const config: webpack.Configuration[] = [{
       }
     ]
   },
-
   // externals: {
   //   'react': 'React',
   //   'react-dom': 'ReactDOM'
   // },
 
   devServer: {
+    historyApiFallback: true,
     hot: true
   }
 }/* , {

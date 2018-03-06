@@ -10,6 +10,12 @@ interface FTState {
   savedTime: Date;
 }
 
+// TODO: generalize the Hashtag component later?
+// interface Formatter {
+//   pattern: RegExp,
+//   splitPattern?: RegExp
+// }
+
 export default class FormattingTextbox extends PureComponent<FTProps, FTState> {
 
   state = {

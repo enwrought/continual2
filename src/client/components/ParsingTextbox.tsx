@@ -72,12 +72,17 @@ export default class ParsingTextbox extends
 
     return (
       <Form>
-        <div>
+        <div className="parsing__preview">
+          <div className="parsing__preview-text">
+            Preview
+          </div>
           { content }
         </div>
         <FormGroup>
           <Input type="textarea" value={text} onChange={this.update} />
-          <Button onClick={this.onClick}>Save</Button>
+          <div>
+            <Button onClick={this.onClick}>Save</Button>
+          </div>
         </FormGroup>
         <Textbox />
       </Form>
