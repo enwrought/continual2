@@ -15,6 +15,7 @@ import { AppConstants } from './src/lib/constants';
  * https://github.com/Glavin001/react-hot-ts/blob/master/webpack.config.ts
  * https://www.typescriptlang.org/docs/handbook/react-&-webpack.html
  */
+// TODO: separate out frontend and backend
 const config: webpack.Configuration[] = [{
   context: path.resolve(__dirname),
   entry: [
@@ -24,7 +25,7 @@ const config: webpack.Configuration[] = [{
   // entry: './src/client/index.tsx',
 
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist/client'),
     filename: 'bundle.js'
     // TODO: publicpath?
   },
@@ -66,7 +67,10 @@ const config: webpack.Configuration[] = [{
           'awesome-typescript-loader'
         ],
         exclude: path.resolve(__dirname, 'node_modules'),
-        include: path.resolve(__dirname, 'src/'),
+        include: [
+          path.resolve(__dirname, 'src/lib/'),
+          path.resolve(__dirname, 'src/client/')
+        ],
       },
       {
         enforce: 'pre',
@@ -84,8 +88,6 @@ const config: webpack.Configuration[] = [{
     historyApiFallback: true,
     hot: true
   }
-}/* , {
-  entry: './src/server/index.ts'
-} */ ];
+}];
 
 export default config;
