@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dev-build/",
     "module": "commonjs",
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": ["es2015.promise", "es6", "dom"],
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react",
@@ -15,9 +15,10 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "allowSyntheticDefaultImports": true
   },
+  "include": ["./src/server/index.ts"],
   "exclude": [
     "node_modules",
     "build",

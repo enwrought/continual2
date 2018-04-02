@@ -1,3 +1,3 @@
-import * as mongoose from 'mongoose';
+// import * as mongoose from 'mongoose';
 
-mongoose.connect('mongodb://localhost/dev');
+// mongoose.connect('mongodb://localhost/dev');
