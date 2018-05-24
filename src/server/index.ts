@@ -4,13 +4,10 @@ import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
 
 import { createConnection } from 'typeorm';
-import { User } from './api/entity/User';
+import { Entry, Tag, User } from './api/entity';
 
 const port = process.env.PORT || 3000;
 
-// app.use(bodyParser.urlencoded({
-//   extended: true
-// }));
 
 const connection = createConnection({
   type: 'mysql',
@@ -20,7 +17,9 @@ const connection = createConnection({
   password: process.env.password || '',
   database: process.env.database || '',
   entities: [
-      User
+    Tag,
+    Entry,
+    User
   ],
   synchronize: true,
   logging: false

@@ -1,28 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entry } from './Entry';
+import { Tag } from './Tag';
+import { Size } from '../../../lib/constants';
 
 @Entity()
 export class User {
-  // TODO: should we have an id in case they change username?
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @PrimaryColumn()
-  @Column({
-    length: 20
-  })
+  @Column({ length: Size.User.username })
   username: string;
 
-  @Column({
-    length: 36
-  })
+  @Column({ length: Size.User.name })
   name: string;
 
   @Column()
   dob?: Date;
 
-  @Column({
-    length: 1
-  })
+  @Column({ length: Size.User.gender })
   gender?: string;
 
   @Column('text')
@@ -30,4 +26,12 @@ export class User {
 
   @Column()
   createdTime?: Date;
+
+  @OneToMany(type => Entry, entry => entry.author)
+  entries: Entry[]
+
+  @ManyToMany(type => Tag)
+  @JoinTable()
+  tags: Tag[]
+
 }
