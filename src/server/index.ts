@@ -1,37 +1,28 @@
-import './db';
-import app from './api/routes/DailyRoute';
 import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { createConnection } from 'typeorm';
-import { Entry, Tag, User } from './api/entity';
+import { ApplicationModule } from './ApplicationModule';
 
 const port = process.env.PORT || 3000;
 
+async function bootstrap() {
+  const app = await NestFactory.create(ApplicationModule);
 
-const connection = createConnection({
-  type: 'mysql',
-  host: process.env.host || 'localhost',
-  port: 3306,
-  username: process.env.username || '',
-  password: process.env.password || '',
-  database: process.env.database || '',
-  entities: [
-    Tag,
-    Entry,
-    User
-  ],
-  synchronize: true,
-  logging: false
-});
+  const options = new DocumentBuilder()
+    .setTitle('Users API')
+    .setDescription('Create users and entries.')
+    .setVersion('1.0')
+    .addTag('users')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
-app.use(bodyParser.json({ strict: false, type: '*/json' }));
+  await app.listen(port);
+  console.log(`Started server on port ${port}.`);
+}
+bootstrap();
 
-app.listen(port, (error: any) => {
-  if (error) {
-    console.error(error);
-  }
-});
-
-
-console.log(`Started server on port ${port}.`);

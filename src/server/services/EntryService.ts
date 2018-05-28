@@ -1,46 +1,61 @@
-import { getRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-// TODO: refactor into repository
-import { User, Entry } from '../api/entity';
+import { User, Entry } from '../entities';
+import { CreateEntryDTO, ReturnEntriesShortDTO } from '../dto';
 
+function setEntryValues(entry: Entry, entryValues: CreateEntryDTO) {
+  const currTime = new Date();
+  entry.created = currTime;
+  entry.title = entryValues.title || '';
+  entry.text = entryValues.text || '';
+  entry.lastUpdated = currTime;
 
-
-interface EntryValues {
-  author: User,
-  created: Date,
-  published: Date,
-  title: string,
-  text: string
+  if (entryValues.publish) {
+    // By default, isDraft is true, published is false
+    entry.published = currTime;
+    entry.isDraft = false;
+  }
 }
 
-function setEntryValues(entry: Entry, entryValues: EntryValues) {
-  entry.author = entryValues.author;
-  entry.created = entryValues.created;
-  entry.published = entryValues.published;
-  entry.title = entryValues.title;
-  entry.text = entryValues.text;
-}
-
+@Injectable()
 export default class EntryService {
 
-  constructor() {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Entry)
+    private readonly entryRepository: Repository<Entry>
+  ) {}
 
-  createEntry(userId: string, entryValues: EntryValues) {
+  /**
+   * Create a new entry. Expected flow is creating a draft as empty entry
+   * or entry with some default text/title. On server side, default the created
+   * and updated time.  Publication should happen on the save endpoint.
+   * @param userId User creating entry
+   * @param entryValues Body containing initial text
+   */
+  createEntry(userId: string, entryValues: CreateEntryDTO) {
     const entry = new Entry();
     setEntryValues(entry, entryValues);
 
-    return getRepository(User).findOneOrFail(userId).then((user: User) => {
-      if (user.entries) {
-        user.entries.push(entry);
-      } else {
-        user.entries = [entry];
-      }
-      return getRepository(User).save(user);
+    return this.userRepository.findOneOrFail(userId).then((user: User) => {
+      entry.author = user;
+      return this.entryRepository.save(entry);
     });
   }
 
-  getEntriesShort(userId: string, length = 40) {
-    return getRepository(User).findOneOrFail(userId).then(user => {
+  /**
+   * Get a truncated version of entries for user.
+   *
+   * TODO: paging/limiting to latest number of entries
+   * TODO: other summary options, ie: tags, calendar events when they are available
+   * @param userId Entries are from this user
+   * @param length Max number of characters before truncating the entry text 
+   */
+  getEntriesShort(userId: string, length = 40): Promise<ReturnEntriesShortDTO[]> {
+    return this.userRepository.findOneOrFail(userId).then(user => {
       const entries = user.entries || [];
       const items = entries
         .filter((entry) => !entry.isDraft && entry.isPublic)
@@ -52,5 +67,9 @@ export default class EntryService {
         }));
         return items;
     });
+  }
+
+  getEntry(entry_id: string) {
+    return this.entryRepository.findOneOrFail(entry_id);
   }
 }

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Entry } from './Entry';
 import { Tag } from './Tag';
-import { Size } from '../../../lib/constants';
+import { Size } from '../../lib/constants';
 
 @Entity()
 export class User {
@@ -15,10 +15,10 @@ export class User {
   @Column({ length: Size.User.name })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   dob?: Date;
 
-  @Column({ length: Size.User.gender })
+  @Column({ length: Size.User.gender, nullable: true })
   gender?: string;
 
   @Column('text')
@@ -33,5 +33,4 @@ export class User {
   @ManyToMany(type => Tag)
   @JoinTable()
   tags: Tag[]
-
 }
