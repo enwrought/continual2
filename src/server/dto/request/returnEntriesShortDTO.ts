@@ -2,7 +2,7 @@ import { ApiModelProperty } from "@nestjs/swagger";
 
 export class ReturnEntriesShortDTO {
   @ApiModelProperty()
-  entry_id: string;
+  entryId: string;
 
   @ApiModelProperty()
   title: string;

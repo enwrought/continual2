@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import UserModule from './modules/UserModule';
+import DiaryModule from './modules/DiaryModule';
 import { Tag, Entry, User } from './entities';
 
 @Module({
@@ -15,7 +15,9 @@ import { Tag, Entry, User } from './entities';
     database: process.env.database || '',
     entities: [__dirname + '/../**/entities/*{.ts,.js}'],
     synchronize: true,
-    logging: false
-  }), UserModule],
+    // logging: false
+    logging: true,
+    logger: 'file'
+  }), DiaryModule],
 })
 export class ApplicationModule {}

@@ -1,4 +1,3 @@
-export * from './createUserDTO';
-export * from './createEntryDTO';
-export * from './returnEntriesShortDTO';
+export * from './request';
+export * from './response';
 export * from './query';

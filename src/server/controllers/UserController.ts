@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
-import { ApiUseTags, ApiOperation, ApiImplicitBody, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 import { EntryService, UserService } from '../services';
 import { User, Entry } from '../entities';
-import { CreateUserDTO, CreateEntryDTO, ReturnEntriesShortDTO, GetEntriesQuery } from '../dto';
+import { CreateUserDTO, ModifyEntryDTO, ReturnEntriesShortDTO, GetEntriesQuery } from '../dto';
 
 @ApiBearerAuth()
-@ApiUseTags('users')
+@ApiUseTags('diary')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService, private readonly entryService: EntryService) {}
@@ -42,14 +42,14 @@ export class UserController {
     @Query() query: GetEntriesQuery
   ): Promise<ReturnEntriesShortDTO[]> {
     console.log({ action: 'getEntriesShort', id, query });
-    return this.entryService.getEntriesShort(id, length);
+    return this.entryService.getEntriesShort(id, query.length);
   }
 
   @ApiOperation({ title: 'Create a new entry.' })
   @ApiResponse({ status: 201, description: 'Successfully created entry.'})
   @ApiResponse({ status: 500, description: 'Internal error.'})
   @Post(':id/entries')
-  async createEntry(@Param('id') id: string, @Body() body: CreateEntryDTO) {
+  async createEntry(@Param('id') id: string, @Body() body: ModifyEntryDTO) {
     console.log({ action: 'createEntry', id, body });
     return this.entryService.createEntry(id, body);
   }
