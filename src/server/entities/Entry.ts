@@ -19,8 +19,8 @@ export class Entry {
   @Column()
   created: Date;
 
-  @Column()
-  published: Date;
+  @Column({ nullable: true })
+  published?: Date;
 
   @Column()
   lastUpdated: Date;
