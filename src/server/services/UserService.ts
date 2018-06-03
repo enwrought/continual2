@@ -5,32 +5,20 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { User } from '../entities';
 import { CreateUserDTO } from '../dto';
-
-function setUserValues(user: User, userValues: CreateUserDTO) {
-  const { username, name, dob, gender = 'U', bio = '' } = userValues;
-
-  user.username = username;
-  user.name = name;
-  user.dob = new Date(dob);
-  user.gender = gender;
-  user.bio = bio;
-  user.createdTime = new Date(Date.now());
-}
+import { UserRepository } from './serviceHelpers';
 
 @Injectable()
-export default class UserService {
+export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
   ) {}
 
   createUser(userInfo: CreateUserDTO): Promise<any> {
-    const user = new User();
-    setUserValues(user, userInfo);
+    const user = new User(userInfo);
 
     return this.userRepository.insert(user);
   }

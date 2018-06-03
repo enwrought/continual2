@@ -7,6 +7,14 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Run all Jest tests",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": ["--runInBand", "--detectOpenHandles"],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Run server",
       "program": "${workspaceFolder}/dev-build/src/server/index.js",
       "outFiles": [

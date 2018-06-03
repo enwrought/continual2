@@ -14,7 +14,7 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('Users API')
     .setDescription('Create users and entries.')
-    .setVersion('1.0')
+    .setVersion('0.0.1')
     .addTag('diary')
     .addBearerAuth()
     .build();
