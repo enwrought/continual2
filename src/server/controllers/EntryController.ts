@@ -19,7 +19,6 @@ export class EntryController {
   async updateEntry(@Param('entryId') entryId: string, @Body() body: ModifyEntryDTO): Promise<any> {
     console.log({ action: 'updateEntry', entryId, body });
 
-    // TODO: update
     return this.entryService.updateEntry(entryId, body);
   }
 

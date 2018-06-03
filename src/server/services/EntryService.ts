@@ -1,28 +1,19 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Equal } from 'typeorm';
+import { Equal } from 'typeorm';
 
+import { UserRepository, EntryRepository } from './serviceHelpers';
 import { User, Entry } from '../entities';
 import { ModifyEntryDTO, ReturnEntriesShortDTO } from '../dto';
 
-function setEntryValues(entry: Entry, entryValues: ModifyEntryDTO, isNew=true) {
-  const currTime = new Date();
-  entry.title = entryValues.title || '';
-  entry.text = entryValues.text || '';
-  entry.lastUpdated = currTime;
-  if (isNew) {
-    entry.created = currTime;
-  }
-}
-
 @Injectable()
-export default class EntryService {
+export class EntryService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     @InjectRepository(Entry)
-    private readonly entryRepository: Repository<Entry>
+    private readonly entryRepository: EntryRepository
   ) {}
 
   /**
@@ -33,8 +24,7 @@ export default class EntryService {
    * @param {ModifyEntryDTO} entryValues Body containing initial text
    */
   createEntry(userId: string, entryValues: ModifyEntryDTO) {
-    const entry = new Entry();
-    setEntryValues(entry, entryValues);
+    const entry = new Entry(entryValues);
 
     return this.userRepository.findOneOrFail(userId).then((user: User) => {
       entry.author = user;
@@ -70,7 +60,7 @@ export default class EntryService {
     if (!this.validateEntry(entry)) {
       throw new NotAcceptableException('Cannot publish entry...')
     }
-    const currTime = new Date();
+    const currTime = (new Date()).toISOString();
     entry.published = currTime;
     entry.isDraft = false;
     entry.isPublic = true;
@@ -85,7 +75,7 @@ export default class EntryService {
    */
   updateEntry(entryId: string, entryValues: ModifyEntryDTO): Promise<Entry> {
     return this.entryRepository.findOneOrFail(entryId).then((entry: Entry) => {
-      setEntryValues(entry, entryValues);
+      entry.setValues(entryValues);
 
       if (entryValues.publish) {
         this.publishEntry(entry);
@@ -116,7 +106,7 @@ export default class EntryService {
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
-            date: entry.created,
+            date: new Date(entry.created),
             text: entry.text.substr(0, length)
           }));
           return items;

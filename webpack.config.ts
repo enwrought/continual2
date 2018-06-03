@@ -64,9 +64,17 @@ const config: webpack.Configuration[] = [{
         test: /\.tsx?$/,
         use: [
           'react-hot-loader/webpack',
-          'awesome-typescript-loader'
+          {
+            loader: 'awesome-typescript-loader',
+            options: {
+              configFileName: 'tsconfig.client.json'
+            },
+          }
         ],
-        exclude: path.resolve(__dirname, 'node_modules'),
+        exclude: [
+          path.resolve(__dirname, 'node_modules'),
+          path.resolve(__dirname, 'src/server/')
+        ],
         include: [
           path.resolve(__dirname, 'src/lib/'),
           path.resolve(__dirname, 'src/client/')
