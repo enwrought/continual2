@@ -7,7 +7,7 @@ import * as HtmlWebpackTemplate from 'html-webpack-template';
 // import HtmlWebpackPlugin from 'html-webpack-plugin';
 // import HtmlWebpackTemplate from 'html-webpack-template';
 
-import { AppConstants } from './src/lib/constants';
+import { AppConstants } from 'lib';
 
 /*
  * Note - Bryant - inspired by:
@@ -20,7 +20,7 @@ const config: webpack.Configuration[] = [{
   context: path.resolve(__dirname),
   entry: [
     'react-hot-loader/patch',
-    './src/client/index.tsx'
+    './index.tsx'
   ],
   // entry: './src/client/index.tsx',
 
@@ -36,7 +36,10 @@ const config: webpack.Configuration[] = [{
     // TODO: resolve aliases if needed later
     // alias: {},
     // extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
-    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json']
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json'],
+    // alias: {
+    //   lib: path.resolve(__dirname, '../lib/')
+    // }
   },
 
   plugins: [
@@ -58,6 +61,8 @@ const config: webpack.Configuration[] = [{
     // new webpack.optimize.DedupePlugin()
   ],
 
+  mode: 'development',
+
   module: {
     rules: [
       {
@@ -71,18 +76,39 @@ const config: webpack.Configuration[] = [{
             },
           }
         ],
+        // [
+        //   {
+        //     loader: 'awesome-typescript-loader',
+        //     options: {
+        //       configFileName: 'tsconfig.client.json'
+        //     },
+        //   },
+        //   {
+        //     loader: 'babel-loader',
+        //     options: {
+        //       presets: [
+        //         '@babel/preset-env',
+        //         '@babel/react',
+        //       ],
+        //       plugins: [
+        //         '@babel/plugin-syntax-typescript',
+        //         '@babel/plugin-syntax-decorators',
+        //         '@babel/plugin-syntax-jsx',
+        //         'react-hot-loader/babel',
+        //       ],
+        //     }
+        //   }
+        // ],
         exclude: [
-          path.resolve(__dirname, 'node_modules'),
-          path.resolve(__dirname, 'src/server/')
+          path.resolve(__dirname, 'node_modules')
         ],
         include: [
-          path.resolve(__dirname, 'src/lib/'),
-          path.resolve(__dirname, 'src/client/')
+          path.resolve(__dirname, './')
         ],
       },
       {
         enforce: 'pre',
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'source-map-loader'
       }
     ]

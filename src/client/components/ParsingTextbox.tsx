@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Form, FormGroup, Input, Button } from 'reactstrap';
 import Textbox from './Textbox';
-import Hashtag from './Hashtag';
-import * as HashtagHelper from '../../lib/helpers/hashtag';
+import HashtagComponent from './HashtagComponent';
+
+import { Hashtag, Size } from 'lib';
 
 interface ParsingTextboxProps {
   value?: string;
@@ -31,6 +32,24 @@ export default class ParsingTextbox extends
 
   timer = 0;
 
+  // constructor(props: any) {
+  //   super(props);
+  //   this.update = this.update.bind(this);
+  // }
+
+  componentDidMount() {
+    console.log({state: 'did mount', time: new Date()});
+  }
+
+  componentWillUnmount() {
+    console.log({ state: 'unmounting', time: new Date()})
+    clearTimeout(this.timer);
+  }
+
+  componentWillUpdate() {
+    console.log({ state: 'will update', time: new Date()});
+  }
+
   updateTimer = (value: string) => {
     const { delay, onProcess } = this.props;
     if (this.timer) {
@@ -46,7 +65,10 @@ export default class ParsingTextbox extends
 
   update = (newValue: React.FormEvent<HTMLInputElement>) => {
     const text = newValue.currentTarget.value;
-    this.setState({ text }, () => this.updateTimer(text));
+    // this.setState({ text });
+    // if (this.isMounted()) {
+      this.setState({ text }, () => this.updateTimer(text));
+    // }
   }
 
   onClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -59,14 +81,14 @@ export default class ParsingTextbox extends
     const { text } = this.state;
 
     // TODO - update only after the delay
-    const stuff = HashtagHelper.parseHashtags(text);
+    const stuff = Hashtag.parseHashtags(text);
     console.log({stuff});
     const content = stuff.map((str, index) => {
       if (str && str.substr(0,1) !== '#') {
         return str;
       } else {
-        const [tag, ...subtags] = HashtagHelper.splitHashtag(str) || [''];
-        return <Hashtag tag={tag} subtags={subtags} key={ index } />
+        const [tag, ...subtags] = Hashtag.splitHashtag(str) || [''];
+        return <HashtagComponent tag={tag} subtags={subtags} key={ index } />
       }
     })
 

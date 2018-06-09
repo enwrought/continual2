@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Entry } from './Entry';
 import { Tag } from './Tag';
-import { Size } from '../../lib/constants';
+import { Size } from 'lib';
 import { CreateUserDTO } from '../dto';
 
 @Entity()

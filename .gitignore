@@ -1,9 +1,10 @@
-node_modules/*
-dev-build/*
-dist/*
+/**/node_modules/*
+/**/dev-build/*
+/**/build/*
+/**/dist/*
 .DS_Store
 npm-debug.log
 .env
 .ormconfig.json
 ormlogs.log
-
+lerna-debug.log
