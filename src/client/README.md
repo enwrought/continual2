@@ -7,7 +7,8 @@ while some part of the component is re-rendering.
 First install required node modules. The client depends on 'lib' to be built
 and linked.
 ```
-lerna run prepare
+lerna bootstrap
+lerna prepare
 lerna bootstrap --hoist
 ```
 Run the following command to start the client.  It will be located on http://localhost:8080/.

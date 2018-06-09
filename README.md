@@ -5,8 +5,9 @@ exploring libraries and whatnot.
 # Running
 To run everything at once, first install node modules and symlink common libraries.
 ```
-lerna bootstrap --hoist
+lerna bootstrap
 lerna prepare
+lerna bootstrap --hoist
 ```
 
 Then run both client and server.

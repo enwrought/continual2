@@ -16,8 +16,9 @@ In order to run the server, you must first satisfy the following additional requ
 ## Running
 To start off the server, first do
 ```
-lerna bootstrap --hoist
+lerna bootstrap
 lerna prepare
+lerna bootstrap --hoist
 ```
 followed by
 ```
