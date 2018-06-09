@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dev-build",
+    "rootDir": "./"
+  },
+  "include": [
+    "./index.ts"
+  ]
+}

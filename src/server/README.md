@@ -16,11 +16,12 @@ In order to run the server, you must first satisfy the following additional requ
 ## Running
 To start off the server, first do
 ```
-npm install
+lerna bootstrap --hoist
+lerna prepare
 ```
 followed by
 ```
-npm run server
+lerna run start --scope server --stream
 ```
 This will start the server locally on the port specified,
 with the default http://localhost:3000/.  Some Swagger API documentation is generated and available
@@ -28,5 +29,5 @@ at http://localhost:3000/api.
 
 To run the tests, run 
 ```
-npm run test-server
+lerna run test --scope server --stream
 ```

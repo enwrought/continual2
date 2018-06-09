@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig",
+  "target": "es5",
+  "include": ["./index.tsx"]
+}

@@ -43,7 +43,7 @@ function combine(tag: string, subtags: string[] | undefined, urls: string[]) {
 }
 
 // TODO - styling
-export default function HashTag(props: HashtagProptypes) {
+export default function HashTagComponent(props: HashtagProptypes) {
   const { tag, subtags } = props;
   const tagUrl = `${HASHTAG_URL_PREFIX}/${tag}`;
 

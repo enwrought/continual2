@@ -10,13 +10,14 @@
       "name": "Run all Jest tests",
       "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "args": ["--runInBand", "--detectOpenHandles"],
-      "internalConsoleOptions": "openOnSessionStart"
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Run server",
-      "program": "${workspaceFolder}/dev-build/src/server/index.js",
+      "program": "${workspaceFolder}/src/server/dev-build/index.js",
       "outFiles": [
         "${workspaceFolder}/**/*.js"
       ],
