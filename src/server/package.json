@@ -6,11 +6,12 @@
   "author": "Bryant Lin",
   "license": "MIT",
   "scripts": {
-    "start": "npm run clean && npm run build && npm run run-server",
-    "clean": "rimraf ./dev-build/",
     "build": "tsc --skipLibCheck",
+    "clean": "rimraf ./dev-build/",
     "run-server": "nodemon --exec 'node -r dotenv/config' ./dev-build/index.js",
-    "test": "jest --detectOpenHandles"
+    "start": "npm run clean && npm run build && npm run run-server",
+    "test": "jest --detectOpenHandles",
+    "tslint": "tslint ./**/*.ts{,x}"
   },
   "dependencies": {
     "@nestjs/common": "^5.0.1",
@@ -37,6 +38,9 @@
     "nodemon": "^1.17.5",
     "rimraf": "^2.6.2",
     "ts-jest": "^22.4.6",
-    "typescript": "^2.9.1"
+    "tslint": "^5.10.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^2.9.1",
+    "typescript-eslint-parser": "^16.0.0"
   }
 }

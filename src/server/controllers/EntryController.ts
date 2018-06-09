@@ -12,12 +12,12 @@ export class EntryController {
   constructor(private readonly entryService: EntryService) {}
 
   @Patch(':entryId')
-  @ApiOperation({title: 'Modify an entry.' })
+  @ApiOperation({ title: 'Modify an entry.' })
   @ApiResponse({ status: 201, description: 'Successfully saved.' })
   @ApiResponse({ status: 404, description: 'Could not find entry.' })
   @ApiResponse({ status: 500, description: 'Internal error.' })
-  async updateEntry(@Param('entryId') entryId: string, @Body() body: ModifyEntryDTO): Promise<any> {
-    console.log({ action: 'updateEntry', entryId, body });
+  async updateEntry(@Param('entryId') entryId: string, @Body() body: ModifyEntryDTO): Promise<Entry> {
+    console.log({ entryId, body, action: 'updateEntry' });
 
     return this.entryService.updateEntry(entryId, body);
   }
@@ -29,7 +29,7 @@ export class EntryController {
   @ApiResponse({ status: 404, description: 'Could not find entry.' })
   @ApiResponse({ status: 500, description: 'Internal error.' })
   async getEntry(@Param('entryId') entryId: string) {
-    console.log({ action: 'getEntry', entryId });
+    console.log({ entryId, action: 'getEntry' });
     return this.entryService.getEntry(entryId);
   }
 }

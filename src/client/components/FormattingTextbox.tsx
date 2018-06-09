@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import * as React from 'react';
 import ParsingTextbox from './ParsingTextbox';
 
 interface FTProps {
@@ -16,12 +16,12 @@ interface FTState {
 //   splitPattern?: RegExp
 // }
 
-export default class FormattingTextbox extends PureComponent<FTProps, FTState> {
+export default class FormattingTextbox extends React.PureComponent<FTProps, FTState> {
 
   state = {
     savedText: '',
     savedTime: new Date()
-  }
+  };
 
   onProcess = (value: string) => {
     // TODO
@@ -33,7 +33,7 @@ export default class FormattingTextbox extends PureComponent<FTProps, FTState> {
     this.setState({
       savedText: value,
       savedTime: new Date()
-    })
+    });
   }
 
   render() {

@@ -5,20 +5,6 @@ import { ModifyEntryDTO } from '../dto';
 @Entity()
 export class Entry {
 
-  constructor(entryValues?: ModifyEntryDTO) {
-    if (entryValues) {
-      const currTime = (new Date()).toISOString();
-      this.setValues(entryValues, currTime);
-      this.created = currTime;
-    }
-  }
-
-  setValues(entryValues: ModifyEntryDTO, currTime = (new Date()).toISOString()) {
-    this.title = entryValues.title || '';
-    this.text = entryValues.text || '';
-    this.lastUpdated = currTime;
-  }
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -44,6 +30,20 @@ export class Entry {
   title: string;
 
   @Column({ type: 'text' })
-  text: string
+  text: string;
+
+  constructor(entryValues?: ModifyEntryDTO) {
+    if (entryValues) {
+      const currTime = (new Date()).toISOString();
+      this.setValues(entryValues, currTime);
+      this.created = currTime;
+    }
+  }
+
+  setValues(entryValues: ModifyEntryDTO, currTime: string = (new Date()).toISOString()) {
+    this.title = entryValues.title || '';
+    this.text = entryValues.text || '';
+    this.lastUpdated = currTime;
+  }
 
 }
