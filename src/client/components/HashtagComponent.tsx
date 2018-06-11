@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 interface HashtagProptypes {
-  tag: string,
+  tag: string;
   subtags?: string[];  // TODO - fix!
   className?: string;
 }
@@ -10,13 +10,13 @@ interface HashtagProptypes {
 export const HASHTAG_URL_PREFIX = 'tags';
 
 function urlReducer(combined: string[], subtag: string) {
-  const next = `${combined[combined.length-1]}/${subtag}`;
+  const next = `${combined[combined.length - 1]}/${subtag}`;
   return [...combined, next];
 }
 
 function toLink(tag: string, url: string) {
   // let Link = ReactRouterDom.Link;
-  return <Link to={url} key={url} className="hashtag__link">{ tag }</Link>
+  return <Link to={url} key={url} className="hashtag__link">{tag}</Link>;
   // return <a href={url}>{ tag }</a>
   // return <div className={url}>{ tag }</div>
 }
@@ -28,7 +28,7 @@ function getTagUrl(tag: string) {
 function combine(tag: string, subtags: string[] | undefined, urls: string[]) {
   // let Link = ReactRouterDom.Link; 
   const tagUrl = getTagUrl(tag);
-  let combined : React.ReactNode[] = [<Link key='hashtag' to={ tagUrl }>{ `#${tag}` }</Link>];
+  const combined: React.ReactNode[] = [<Link key="hashtag" to={tagUrl}>{`#${tag}`}</Link>];
   // let combined : React.ReactNode[] = [<a href={ tagUrl }>{ `#${tag}` }</a>];
   // let combined : React.ReactNode[] = [<div className={ tagUrl }>{ `#${tag}` }</div>];
 
@@ -42,7 +42,8 @@ function combine(tag: string, subtags: string[] | undefined, urls: string[]) {
   return combined;
 }
 
-// TODO - styling
+// TODO: styling
+// tslint:disable-next-line
 export default function HashTagComponent(props: HashtagProptypes) {
   const { tag, subtags } = props;
   const tagUrl = `${HASHTAG_URL_PREFIX}/${tag}`;
@@ -56,5 +57,5 @@ export default function HashTagComponent(props: HashtagProptypes) {
         combined
       }
     </span>
-  )
+  );
 }

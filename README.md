@@ -21,6 +21,6 @@ lerna run start --stream
 Please see the [Server README](./src/server/README.md).
 
 ## Client
-There is not much more than templates set up at the moment. It also compiles, but is currently broken.
+There is not much more than templates set up at the moment.
 For running, please see the
 [Client README](./src/client/README.md).

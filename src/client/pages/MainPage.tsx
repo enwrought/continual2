@@ -6,10 +6,10 @@ export default class TagPage extends React.PureComponent<{}, {}> {
     return (
       <div className="main-page">
         Welcome! Enter today's log.
-        { /* TODO save into redux? */ }
+        {/* TODO: save into redux? */}
         <ParsingTextbox
-          onProcess={ value => { console.log(value); } }
-          onSave={ value => { console.log(`Saved: ${value}`); } }
+          onProcess={(value) => { console.log(value); }}
+          onSave={(value) => { console.log(`Saved: ${value}`); }}
         />
       </div>
     );

@@ -6,11 +6,10 @@ export default class App extends React.PureComponent<{}, {}> {
   render() {
     return (
       <div className="app">
-        <div className="header">
-        </div>
+        <div className="header" />
         <div className="main">
           <Switch>
-            <Route exact path="/" component={MainPage} />
+            <Route exact={true} path="/" component={MainPage} />
             <Route path="/tags" component={TagPage} />
           </Switch>
         </div>

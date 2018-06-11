@@ -7,20 +7,6 @@ import { CreateUserDTO } from '../dto';
 @Entity()
 export class User {
 
-  // TODO: split into also updating user info with the update user endpoint
-  constructor(userValues?: CreateUserDTO) {
-    if (userValues) {
-      const { username, name, dob, gender = 'U', bio = '' } = userValues;
-  
-      this.username = username;
-      this.name = name;
-      this.dob = dob;
-      this.gender = gender;
-      this.bio = bio;
-      this.createdTime = (new Date()).toISOString();
-    }
-  }
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -43,11 +29,25 @@ export class User {
   createdTime: string;
 
   @OneToMany(type => Entry, entry => entry.author, { onDelete: 'CASCADE' })
-  entries: Entry[]
+  entries: Entry[];
 
   @ManyToMany(type => Tag, { onDelete: 'CASCADE' })
   @JoinTable()
-  tags: Tag[]
+  tags: Tag[];
+
+  // TODO: split into also updating user info with the update user endpoint
+  constructor(userValues?: CreateUserDTO) {
+    if (userValues) {
+      const { username, name, dob, gender = 'U', bio = '' } = userValues;
+  
+      this.username = username;
+      this.name = name;
+      this.dob = dob;
+      this.gender = gender;
+      this.bio = bio;
+      this.createdTime = (new Date()).toISOString();
+    }
+  }
 
   // TODO: lastOnline/lastActive entry (updates on any non-background request or login?)
   // TODO: check what is acceptable to log, and maybe log stuff with @BeforeInsert/other typeorm modifiers

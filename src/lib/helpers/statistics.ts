@@ -18,7 +18,7 @@ function estimatedAge(info: DemographicsInfo): number {
 }
 
 function getStatsInfo() {
-
+  return;
 }
 
 export default {};

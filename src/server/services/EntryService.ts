@@ -58,7 +58,7 @@ export class EntryService {
    */
   publishEntry(entry: Entry) {
     if (!this.validateEntry(entry)) {
-      throw new NotAcceptableException('Cannot publish entry...')
+      throw new NotAcceptableException('Cannot publish entry...');
     }
     const currTime = (new Date()).toISOString();
     entry.published = currTime;
@@ -94,7 +94,10 @@ export class EntryService {
    * @param {string} userId Entries are from this user
    * @param {int} length Max number of characters before truncating the entry text 
    */
-  getEntriesShort(userId: string, length=40, filterPrivate=true): Promise<ReturnEntriesShortDTO[]> {
+  getEntriesShort(
+    userId: string, length: number = 40,
+    filterPrivate: boolean = true
+  ): Promise<ReturnEntriesShortDTO[]> {
     return this.entryRepository
       .createQueryBuilder('entry')
       .select()
@@ -102,14 +105,14 @@ export class EntryService {
       .getMany()
       .then((entries: Entry[]) => {
         const items = entries
-          .filter((entry) => !filterPrivate || (!entry.isDraft && entry.isPublic))
+          .filter(entry => !filterPrivate || (!entry.isDraft && entry.isPublic))
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
             date: new Date(entry.created),
             text: entry.text.substr(0, length)
           }));
-          return items;
+        return items;
       }
     );
   }

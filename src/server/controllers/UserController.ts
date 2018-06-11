@@ -4,6 +4,7 @@ import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/sw
 import { EntryService, UserService } from '../services';
 import { User, Entry } from '../entities';
 import { CreateUserDTO, ModifyEntryDTO, ReturnEntriesShortDTO, GetEntriesQuery } from '../dto';
+import { InsertResult } from 'typeorm';
 
 @ApiBearerAuth()
 @ApiUseTags('diary')
@@ -12,45 +13,45 @@ export class UserController {
   constructor(private readonly userService: UserService, private readonly entryService: EntryService) {}
 
   @Post()
-  @ApiOperation({title: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'Successfully created new user.'})
+  @ApiOperation({ title: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'Successfully created new user.' })
   @ApiResponse({ status: 500, description: 'Internal error.' })
-  async createUser(@Body() body: CreateUserDTO): Promise<any> {
+  async createUser(@Body() body: CreateUserDTO): Promise<InsertResult> {
     // TODO: this is boilerplate for all endpoints - we should just autolog
     // every request (endpoint, params, headers, body, etc) somewhere
-    console.log({ action: 'createUser', body });
+    console.log({ body, action: 'createUser' });
     const response = this.userService.createUser(body);
     return response;
   }
 
   @Get(':id')
   @ApiOperation({ title: 'Get information about a user' })
-  @ApiResponse({ status: 200, description: 'OK'})
+  @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 500, description: 'Internal error.' })
   async getUser(@Param('id') id: string): Promise<User> {
-    console.log({ action: 'getUser', id })
+    console.log({ id, action: 'getUser' });
     return this.userService.getUser(id);
   }
 
   @ApiOperation({ title: 'Get a list of user entries' })
-  @ApiResponse({ status: 200, description: 'OK.'})
-  @ApiResponse({ status: 404, description: 'Could not find user.'})
+  @ApiResponse({ status: 200, description: 'OK.' })
+  @ApiResponse({ status: 404, description: 'Could not find user.' })
   @ApiResponse({ status: 500, description: 'Internal error.' })
   @Get(':id/entries')
   async getEntriesShort(
     @Param('id') id: string,
     @Query() query: GetEntriesQuery
   ): Promise<ReturnEntriesShortDTO[]> {
-    console.log({ action: 'getEntriesShort', id, query });
+    console.log({ id, query, action: 'getEntriesShort' });
     return this.entryService.getEntriesShort(id, query.length);
   }
 
   @ApiOperation({ title: 'Create a new entry.' })
-  @ApiResponse({ status: 201, description: 'Successfully created entry.'})
-  @ApiResponse({ status: 500, description: 'Internal error.'})
+  @ApiResponse({ status: 201, description: 'Successfully created entry.' })
+  @ApiResponse({ status: 500, description: 'Internal error.' })
   @Post(':id/entries')
   async createEntry(@Param('id') id: string, @Body() body: ModifyEntryDTO) {
-    console.log({ action: 'createEntry', id, body });
+    console.log({ id, body, action: 'createEntry' });
     return this.entryService.createEntry(id, body);
   }
 }
