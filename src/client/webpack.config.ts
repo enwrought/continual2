@@ -19,7 +19,7 @@ import { AppConstants } from 'lib';
 const config: webpack.Configuration[] = [{
   context: path.resolve(__dirname),
   entry: [
-    'react-hot-loader/patch',
+    // 'react-hot-loader/patch',
     './index.tsx'
   ],
   // entry: './src/client/index.tsx',
@@ -43,8 +43,6 @@ const config: webpack.Configuration[] = [{
   },
 
   plugins: [
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     // TODO - is it possible to integrate this with the package.json description?
     new HtmlWebpackPlugin({
       title: AppConstants.APP_NAME,
@@ -57,7 +55,9 @@ const config: webpack.Configuration[] = [{
       // HtmlWebpackTemplate params
       appMountId: AppConstants.APP_MOUNT_ID
       // appMountId: 'app'
-    })
+    }),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     // new webpack.optimize.DedupePlugin()
   ],
 
@@ -68,7 +68,7 @@ const config: webpack.Configuration[] = [{
       {
         test: /\.tsx?$/,
         use: [
-          'react-hot-loader/webpack',
+          // 'react-hot-loader/webpack',
           {
             loader: 'awesome-typescript-loader',
             options: {

@@ -31,22 +31,8 @@ export default class ParsingTextbox extends
 
   timer = 0;
 
-  // constructor(props: any) {
-  //   super(props);
-  //   this.update = this.update.bind(this);
-  // }
-
   componentDidMount() {
     console.log({ state: 'did mount', time: new Date() });
-  }
-
-  componentWillUnmount() {
-    console.log({ state: 'unmounting', time: new Date() });
-    clearTimeout(this.timer);
-  }
-
-  componentWillUpdate() {
-    console.log({ state: 'will update', time: new Date() });
   }
 
   updateTimer = (value: string) => {
@@ -64,10 +50,7 @@ export default class ParsingTextbox extends
 
   update = (newValue: React.FormEvent<HTMLInputElement>) => {
     const text = newValue.currentTarget.value;
-    // this.setState({ text });
-    // if (this.isMounted()) {
     this.setState({ text }, () => this.updateTimer(text));
-    // }
   }
 
   onClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -81,7 +64,7 @@ export default class ParsingTextbox extends
 
     // TODO - update only after the delay
     const stuff = Hashtag.parseHashtags(text);
-    console.log({ stuff });
+
     const content = stuff.map((str, index) => {
       if (str && str.substr(0, 1) !== '#') {
         return str;
@@ -109,7 +92,3 @@ export default class ParsingTextbox extends
     );
   }
 }
-
-// ParsingTextbox.defaultProps = {
-//   delay: DEFAULT_DELAY
-// };
