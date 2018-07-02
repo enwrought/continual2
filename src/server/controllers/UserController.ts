@@ -3,7 +3,14 @@ import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/sw
 
 import { EntryService, UserService } from '../services';
 import { User, Entry } from '../entities';
-import { CreateUserDTO, ModifyEntryDTO, ReturnEntriesShortDTO, GetEntriesQuery } from '../dto';
+import {
+  CreateUserDTO,
+  GetEntriesQuery,
+  ModifyEntryDTO,
+  OptionalErrorResponse,
+  PublicUserInfoDTO,
+  ReturnEntriesShortDTO
+} from '../dto';
 import { InsertResult } from 'typeorm';
 
 @ApiBearerAuth()
@@ -26,11 +33,12 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ title: 'Get information about a user' })
-  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 200, description: 'OK', type: PublicUserInfoDTO })
   @ApiResponse({ status: 500, description: 'Internal error.' })
-  async getUser(@Param('id') id: string): Promise<User> {
+  async getUser(@Param('id') id: string): Promise<PublicUserInfoDTO> {
     console.log({ id, action: 'getUser' });
-    return this.userService.getUser(id);
+    const user = await this.userService.getUser(id);
+    return new PublicUserInfoDTO(user);
   }
 
   @ApiOperation({ title: 'Get a list of user entries' })

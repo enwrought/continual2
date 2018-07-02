@@ -1,8 +1,29 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+
 import ParsingTextbox from './ParsingTextbox';
 
-interface FTProps {
-  date: string; // TODO - convert to Date object type
+interface Action {
+  type: string;
+  payload: {
+    body: string
+  };
+}
+
+// const NEW_ENTRY_ID = 'NEW_ENTRY';
+
+interface PropsFromReduxState {
+  initValue: string;
+}
+
+interface PropsFromDispatch {
+  saveToServer: (text: string) => Action;
+}
+
+type JoinedProps = PropsFromReduxState & PropsFromDispatch;
+
+interface FTProps extends JoinedProps {
+  // readonly id: string;
 }
 
 interface FTState {
@@ -16,7 +37,11 @@ interface FTState {
 //   splitPattern?: RegExp
 // }
 
-export default class FormattingTextbox extends React.PureComponent<FTProps, FTState> {
+interface GlobalState {
+  content: 'string';
+}
+
+class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
 
   state = {
     savedText: '',
@@ -24,21 +49,44 @@ export default class FormattingTextbox extends React.PureComponent<FTProps, FTSt
   };
 
   onProcess = (value: string) => {
-    // TODO
+    // TODO: implement
   }
 
   onSave = (value: string) => {
     // TODO save and then update state when sucessful
+    const { saveToServer } = this.props;
 
-    this.setState({
-      savedText: value,
-      savedTime: new Date()
-    });
+    this.setState(
+      {
+        savedText: value,
+        savedTime: new Date()
+      },
+      () => {
+        console.log('sending');
+        saveToServer(value);
+      }
+    );
   }
 
   render() {
+    const { initValue } = this.props;
+    console.log({ initValue });
     return (
       <ParsingTextbox onProcess={this.onProcess} onSave={this.onSave} />
     );
   }
 }
+
+const FormattingTextbox = connect<PropsFromReduxState, PropsFromDispatch, void>(
+  (state: GlobalState) => {
+    console.log(state);
+    return {
+      initValue: state.content
+    };
+  },
+  (dispatch: Function) => ({
+    saveToServer: (text: string) => dispatch({ type: 'CREATE_NEW_ENTRY' })
+  })
+)(FormattingTextboxChild);
+
+export default FormattingTextbox;

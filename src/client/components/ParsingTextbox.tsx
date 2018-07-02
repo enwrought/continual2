@@ -62,7 +62,8 @@ export default class ParsingTextbox extends
   render() {
     const { text } = this.state;
 
-    // TODO - update only after the delay
+    // TODO: draft.js/ parse line breaks as <p> + </p>
+    // TODO: - update only after the delay
     const stuff = Hashtag.parseHashtags(text);
 
     const content = stuff.map((str, index) => {
