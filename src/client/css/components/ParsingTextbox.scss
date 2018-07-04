@@ -1,0 +1,19 @@
+.parsing-textbox {
+
+  .parsing-textbox__bottom-bar {
+    padding-top: $padding-small;
+  }
+
+  .parsing-textbox__save-button-col {
+    text-align: right;
+  }
+
+  .parsing-textbox__save-time {
+    font-size: $font-small;
+    color: gray;
+  }
+
+  .container {
+    padding: 0;
+  }
+}

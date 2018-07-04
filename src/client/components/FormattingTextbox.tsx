@@ -72,7 +72,7 @@ class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
     const { initValue } = this.props;
     console.log({ initValue });
     return (
-      <ParsingTextbox onProcess={this.onProcess} onSave={this.onSave} />
+      <ParsingTextbox classNames="formatting-textbox" onProcess={this.onProcess} onSave={this.onSave} />
     );
   }
 }

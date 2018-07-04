@@ -24,7 +24,8 @@ const config: webpack.Configuration[] = [{
 
   output: {
     path: path.join(__dirname, 'dist/client'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
     // TODO: publicpath?
   },
 
@@ -63,7 +64,6 @@ const config: webpack.Configuration[] = [{
       {
         test: /\.tsx?$/,
         use: [
-          // 'react-hot-loader/webpack',
           {
             loader: 'awesome-typescript-loader',
             options: {
@@ -71,29 +71,6 @@ const config: webpack.Configuration[] = [{
             },
           }
         ],
-        // [
-        //   {
-        //     loader: 'awesome-typescript-loader',
-        //     options: {
-        //       configFileName: 'tsconfig.client.json'
-        //     },
-        //   },
-        //   {
-        //     loader: 'babel-loader',
-        //     options: {
-        //       presets: [
-        //         '@babel/preset-env',
-        //         '@babel/react',
-        //       ],
-        //       plugins: [
-        //         '@babel/plugin-syntax-typescript',
-        //         '@babel/plugin-syntax-decorators',
-        //         '@babel/plugin-syntax-jsx',
-        //         'react-hot-loader/babel',
-        //       ],
-        //     }
-        //   }
-        // ],
         exclude: [
           path.resolve(__dirname, 'node_modules')
         ],
@@ -105,6 +82,26 @@ const config: webpack.Configuration[] = [{
         enforce: 'pre',
         test: /\.jsx?$/,
         loader: 'source-map-loader'
+      },
+      {
+        test: /\.scss/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       }
     ]
   },

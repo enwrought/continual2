@@ -15,10 +15,10 @@ sagaMiddleware.run(rootSaga);
 
 const rootEl = document.getElementById('app');
 ReactDOM.render(
-  <BrowserRouter>
-    <Provider store={store}>
+  <Provider store={store}>
+    <BrowserRouter>
       <App />
-    </Provider>
-  </BrowserRouter>,
+    </BrowserRouter>
+  </Provider>,
   rootEl
 );

@@ -1,15 +1,18 @@
+import * as moment from 'moment';
 import * as React from 'react';
-import { Form, FormGroup, Input, Button } from 'reactstrap';
-import Textbox from './Textbox';
-import HashtagComponent from './HashtagComponent';
+import { Container, Row, Col, Form, FormGroup, Input, Button } from 'reactstrap';
+// TODO: figure out best way in using classnames.bind() and bind with styles
+import * as cx from 'classnames';
 
 import { Hashtag, Size } from 'lib';
+import HashtagComponent from './HashtagComponent';
 
 interface ParsingTextboxProps {
   value?: string;
   delay?: number;
   onProcess: (value: string) => void;
   onSave: (value: string) => void;
+  classNames?: string;
 }
 
 interface ParsingTextboxState {
@@ -30,10 +33,7 @@ export default class ParsingTextbox extends
   };
 
   timer = 0;
-
-  componentDidMount() {
-    console.log({ state: 'did mount', time: new Date() });
-  }
+  lastSaveTime = new Date();
 
   updateTimer = (value: string) => {
     const { delay, onProcess } = this.props;
@@ -43,6 +43,7 @@ export default class ParsingTextbox extends
     this.timer = setTimeout(
       () => {
         onProcess(value);
+        this.lastSaveTime = new Date();
       },
       delay
     );
@@ -60,6 +61,7 @@ export default class ParsingTextbox extends
   }
 
   render() {
+    const { classNames } = this.props;
     const { text } = this.state;
 
     // TODO: draft.js/ parse line breaks as <p> + </p>
@@ -74,21 +76,32 @@ export default class ParsingTextbox extends
       return <HashtagComponent tag={tag} subtags={subtags} key={index} />;
     });
 
+    const combinedClassNames = cx('parsing-textbox', classNames);
+
     return (
-      <Form>
-        <div className="parsing__preview">
-          <div className="parsing__preview-text">
-            Preview
-          </div>
+      <Form className={combinedClassNames}>
+        <div className="parsing-textbox__preview">
           {content}
         </div>
-        <FormGroup>
-          <Input type="textarea" value={text} onChange={this.update} />
-          <div>
-            <Button onClick={this.onClick}>Save</Button>
-          </div>
-        </FormGroup>
-        <Textbox />
+        <Container>
+          <FormGroup>
+            <Row noGutters={true}>
+              <Col>
+                <Input type="textarea" value={text} onChange={this.update} />
+              </Col>
+            </Row>
+            <Row className="parsing-textbox__bottom-bar" noGutters={true}>
+              <Col className="parsing-textbox__save-time" xs="9">
+                {/* TODO: this probably needs to be passed in */}
+                {/* TODO: Relative time needs this to be refreshed every so often... */}
+                {`Saved ${moment(this.lastSaveTime).fromNow()}.`}
+              </Col>
+              <Col xs="3" className="parsing-textbox__save-button-col">
+                <Button className="parsing-textbox__save-button" size="sm" onClick={this.onClick}>Save</Button>
+              </Col>
+            </Row>
+          </FormGroup>
+        </Container>
       </Form>
     );
   }

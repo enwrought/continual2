@@ -1,0 +1,10 @@
+.app-header {
+  margin: 0;
+  padding: $padding-normal;
+  min-height: 1em;
+  background-color: $theme-color;
+
+  .app-header__user {
+    font-size: $font-small;
+  }
+}
