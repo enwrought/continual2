@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { InsertResult } from 'typeorm';
 
 import { EntryService, UserService } from '../services';
 import { User, Entry } from '../entities';
@@ -11,7 +12,6 @@ import {
   PublicUserInfoDTO,
   ReturnEntriesShortDTO
 } from '../dto';
-import { InsertResult } from 'typeorm';
 
 @ApiBearerAuth()
 @ApiUseTags('diary')
@@ -60,6 +60,9 @@ export class UserController {
   @Post(':id/entries')
   async createEntry(@Param('id') id: string, @Body() body: ModifyEntryDTO) {
     console.log({ id, body, action: 'createEntry' });
-    return this.entryService.createEntry(id, body);
+    return this.entryService.createEntry(id, body).catch((err) => {
+      console.log({ err });
+      throw new HttpException(`Could not find user with id '${id}'.`, HttpStatus.NOT_FOUND);
+    });
   }
 }

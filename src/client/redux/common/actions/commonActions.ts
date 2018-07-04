@@ -18,5 +18,9 @@ export interface FetchFromServerAction {
     method: HttpMethod;
     endpoint: string;
     body?: object;
+
+    onSuccessActionType: string;
+    onHttpErrorActionType: string;
+    onOtherErrorActionType: string;
   };
 }

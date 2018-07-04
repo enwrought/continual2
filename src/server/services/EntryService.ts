@@ -109,7 +109,7 @@ export class EntryService {
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
-            date: new Date(entry.created),
+            date: new Date(entry.createdTime),
             text: entry.text.substr(0, length)
           }));
         return items;

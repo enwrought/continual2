@@ -20,7 +20,27 @@ interface NewEntryAction {
 
 const getEntryInfo = (store: ClientReduxStore) => ({
   user: store.user,
-  entry: store.drafts[store.latest_draft] || { title: '', text: '' }
+  entry: store.diary.drafts[store.diary.latest_draft] || { title: '', text: '' }
+});
+
+// TODO: merge DTO object to same place with server
+interface Entry {
+  id: string;
+  text: string;
+  title: string;
+  published?: boolean;
+}
+
+function putSaveEntry(data: object) {
+  console.log(data);
+  put({
+    type: ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS,
+    payload: data
+  });
+}
+
+const putErrorEntry = (data: object) => put({
+  type: ContentActions.SAVE_ENTRY_FROM_SERVER_FAILURE
 });
 
 function* newEntry() {
@@ -31,8 +51,12 @@ function* newEntry() {
       endpoint: `users/${info.user.id}/entries`,
       body: {
         title: info.entry.title || '',
-        text: info.entry.text || ''
-      }
+        text: info.entry.text || '',
+      },
+      method: 'POST',
+      onSuccessActionType: ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS,
+      onHttpErrorActionType: ContentActions.SAVE_ENTRY_FROM_SERVER_FAILURE,
+      onOtherErrorActionType: ContentActions.SAVE_ENTRY_FROM_SERVER_FAILURE,
     }
   });
 }

@@ -11,14 +11,14 @@ export const reducers = combineReducers({
   // TODO: implement grabbing user info
   user: Redux.createReducer(
     {
+      // id: 'DUMMY_ID_WRONG',
       id: 'DUMMY_ID',
       username: 'i_am_a_dummy',
       name: 'Dummy Bot'
     },
     {}
   ),
-  entries: diaryReducer,
-  drafts: diaryReducer
+  diary: diaryReducer,
 });
 
 export function* rootSaga() {

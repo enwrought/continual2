@@ -25,7 +25,7 @@ export class User {
   @Column('text')
   bio: string;
 
-  @Column('datetime')
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdTime: string;
 
   @OneToMany(type => Entry, entry => entry.author, { onDelete: 'CASCADE' })

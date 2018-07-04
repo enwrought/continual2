@@ -17,8 +17,8 @@ export class Entry {
   @Column({ default: 0 })
   isPublic: boolean;
 
-  @Column('datetime')
-  created: string;
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  createdTime: string;
 
   @Column({ type: 'datetime', nullable: true })
   published?: string;
@@ -36,7 +36,6 @@ export class Entry {
     if (entryValues) {
       const currTime = (new Date()).toISOString();
       this.setValues(entryValues, currTime);
-      this.created = currTime;
     }
   }
 
