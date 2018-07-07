@@ -9,6 +9,7 @@ interface UserInfo {
 interface Entry {
   title: string;
   text: string;
+  date: Date;
 }
 
 interface ServerStatus {
@@ -45,6 +46,7 @@ interface DiaryStore {
    * Key of the last edited draft in drafts
    */
   latest_draft: string;
+  entries: EntryStoreRecord;
 }
 
 // export type EntryStore = Record<any, EntryState>;

@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { FormattingTextbox, ParsingTextbox } from '../components';
+import { FormattingTextbox, ParsingTextbox, ConnectedSavedEntry } from '../components';
 // import { FormattingTextbox } from '../components/FormattingTextbox';
 
-export default class MainPage extends React.PureComponent<{}, {}> {
-  render() {
-    return (
-      <div className="main-page">
-        Welcome! Write about your life.
-        {/* TODO: save into redux? */}
-        <FormattingTextbox />
-      </div>
-    );
-  }
-}
+export const MainPage: React.SFC = () => {
+  return (
+    <div className="main-page">
+      Welcome! Write about your life.
+      {/* TODO: format all stuff under a single container. */}
+      <ConnectedSavedEntry />
+      <FormattingTextbox />
+    </div>
+  );
+};

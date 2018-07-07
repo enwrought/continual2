@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
-import { Redux } from 'lib';
+import { Redux } from '../../../../lib';
 
-import { draftReducer } from './entry';
+import { draftReducer, entriesReducer } from './entry';
 
 export const diaryReducer = combineReducers({
-  drafts: draftReducer
+  drafts: draftReducer,
+  entries: entriesReducer,
 });

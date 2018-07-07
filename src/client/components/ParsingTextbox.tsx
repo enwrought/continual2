@@ -4,8 +4,8 @@ import { Container, Row, Col, Form, FormGroup, Input, Button } from 'reactstrap'
 // TODO: figure out best way in using classnames.bind() and bind with styles
 import * as cx from 'classnames';
 
-import { Hashtag, Size } from 'lib';
-import HashtagComponent from './HashtagComponent';
+import { Hashtag, Size } from '../../lib';
+import { HashtagComponent } from './HashtagComponent';
 
 interface ParsingTextboxProps {
   value?: string;
@@ -21,7 +21,7 @@ interface ParsingTextboxState {
 
 const DEFAULT_DELAY = 500;
 
-export default class ParsingTextbox extends 
+export default class ParsingTextbox extends
                      React.PureComponent<ParsingTextboxProps, ParsingTextboxState> {
 
   state = {

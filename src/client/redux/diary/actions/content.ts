@@ -1,8 +1,12 @@
 export const ContentActions = {
   CREATE_NEW_ENTRY: 'CREATE_NEW_ENTRY',
   SAVE_ENTRY: 'SAVE_ENTRY',
+
   LOAD_USER_FROM_SERVER: 'LOAD_USER_FROM_SERVER',
+
   LOAD_ENTRIES_FROM_SERVER: 'LOAD_ENTRIES_FROM_SERVER',
+  LOAD_ENTRIES_FROM_SERVER_SUCCESS: 'LOAD_ENTRIES_FROM_SERVER_SUCCESS',
+  LOAD_ENTRIES_FROM_SERVER_FAILURE: 'LOAD_ENTRIES_FROM_SERVER_FAILURE',
 
   SAVE_ENTRY_FROM_SERVER: 'SAVE_ENTRY_FROM_SERVER',
   SAVE_ENTRY_FROM_SERVER_SUCCESS: 'SAVE_ENTRY_FROM_SERVER_SUCCESS',
@@ -17,5 +21,18 @@ export interface SaveEntryFromServerAction {
     id: string;
     title: string;
     text: string;
+  };
+}
+
+export interface RetrieveEntriesFromServerAction {
+  type: string;
+  payload: {
+    items: {
+      [id: string]: {
+        title: string;
+        text: string;
+        date: Date;
+      };
+    };
   };
 }

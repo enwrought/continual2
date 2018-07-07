@@ -22,6 +22,7 @@ interface PropsFromDispatch {
 
 type JoinedProps = PropsFromReduxState & PropsFromDispatch;
 
+// TODO: this typescript thing is backwards - FTProps should not have to depend on the parent
 interface FTProps extends JoinedProps {
   // readonly id: string;
 }
@@ -53,7 +54,7 @@ class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
   }
 
   onSave = (value: string) => {
-    // TODO save and then update state when sucessful
+    // TODO: save and then update state when sucessful
     const { saveToServer } = this.props;
 
     this.setState(
