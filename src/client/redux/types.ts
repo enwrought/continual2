@@ -45,7 +45,7 @@ interface DiaryStore {
   /**
    * Key of the last edited draft in drafts
    */
-  latest_draft: string;
+  latestDraft: string;
   entries: EntryStoreRecord;
 }
 

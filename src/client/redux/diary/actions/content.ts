@@ -24,15 +24,15 @@ export interface SaveEntryFromServerAction {
   };
 }
 
+export interface ReturnEntryShort {
+  title: string;
+  text: string;
+  date: string;
+  isDraft: boolean;
+  entryId: string;
+}
+
 export interface RetrieveEntriesFromServerAction {
   type: string;
-  payload: {
-    items: {
-      [id: string]: {
-        title: string;
-        text: string;
-        date: Date;
-      };
-    };
-  };
+  payload: ReturnEntryShort[];
 }

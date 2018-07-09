@@ -19,7 +19,7 @@ export const SavedEntry: React.SFC<SavedEntryProps> = (props: SavedEntryProps) =
   const relDate = momentDate.fromNow();
   const completeDate = momentDate.toLocaleString();
   return (
-    <Container className="saved-entry">
+    <React.Fragment>
       <Row className="saved-entry__title-wrapper">
         <Col xs="12" className="saved-entry__title">{title}</Col>
         <div className="saved-entry__date" title={completeDate}>{relDate}</div>
@@ -29,6 +29,6 @@ export const SavedEntry: React.SFC<SavedEntryProps> = (props: SavedEntryProps) =
           {text}
         </Col>
       </Row>
-    </Container>
+    </React.Fragment>
   );
 };

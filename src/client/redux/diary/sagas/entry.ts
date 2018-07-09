@@ -18,10 +18,14 @@ interface NewEntryAction {
   };
 }
 
+// TODO: break this up into smaller sections so that reselect caching will better handle
+//       changes to the different parts of the store
 const getEntryInfo = (store: ClientReduxStore) => ({
   user: store.user,
-  entry: store.diary.drafts[store.diary.latest_draft] || { title: '', text: '' }
+  entry: store.diary.drafts[store.diary.latestDraft] || { title: '', text: '' }
 });
+
+const getUserInfo = (store: ClientReduxStore) => store.user;
 
 // TODO: merge DTO object to same place with server
 interface Entry {
@@ -61,6 +65,25 @@ function* newEntry() {
   });
 }
 
+function* loadEntries() {
+  const userInfo = yield select(getUserInfo);
+
+  yield put({
+    type: CommonActions.FETCH_FROM_SERVER,
+    payload: {
+      endpoint: `users/${userInfo.id}/entries?includeDrafts=true`,
+      method: 'GET',
+      onSuccessActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS,
+      onHttpErrorActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_FAILURE,
+      onOtherErrorActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_FAILURE,
+    }
+  });
+}
+
 export function* watchNewEntry() {
   yield takeLatest(ContentActions.CREATE_NEW_ENTRY, newEntry);
+}
+
+export function* watchLoadEntries() {
+  yield takeLatest(ContentActions.LOAD_ENTRIES_FROM_SERVER, loadEntries);
 }

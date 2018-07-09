@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 import ParsingTextbox from './ParsingTextbox';
+import { ClientReduxStore } from '../redux/types';
 
 interface Action {
   type: string;
@@ -14,6 +16,7 @@ interface Action {
 
 interface PropsFromReduxState {
   initValue: string;
+  readOnly: boolean;
 }
 
 interface PropsFromDispatch {
@@ -37,11 +40,6 @@ interface FTState {
 //   pattern: RegExp,
 //   splitPattern?: RegExp
 // }
-
-interface GlobalState {
-  content: 'string';
-}
-
 class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
 
   state = {
@@ -70,19 +68,28 @@ class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
   }
 
   render() {
-    const { initValue } = this.props;
+    const { initValue, readOnly } = this.props;
     console.log({ initValue });
     return (
-      <ParsingTextbox classNames="formatting-textbox" onProcess={this.onProcess} onSave={this.onSave} />
+      <ParsingTextbox
+        classNames="formatting-textbox"
+        onProcess={this.onProcess}
+        onSave={this.onSave}
+        readOnly={readOnly}
+      />
     );
   }
 }
 
 const FormattingTextbox = connect<PropsFromReduxState, PropsFromDispatch, void>(
-  (state: GlobalState) => {
-    console.log(state);
+  (state: ClientReduxStore) => {
+    const draftId = state.diary.latestDraft;
+    const initValue = draftId ? state.diary.drafts.get('items')[draftId].text : '';
+    const readOnly = state.diary.drafts.get('server').status !== 'OK';
+
     return {
-      initValue: state.content
+      initValue,
+      readOnly
     };
   },
   (dispatch: Function) => ({

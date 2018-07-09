@@ -13,6 +13,7 @@ interface ParsingTextboxProps {
   onProcess: (value: string) => void;
   onSave: (value: string) => void;
   classNames?: string;
+  readOnly?: boolean;
 }
 
 interface ParsingTextboxState {
@@ -61,7 +62,7 @@ export default class ParsingTextbox extends
   }
 
   render() {
-    const { classNames } = this.props;
+    const { classNames, readOnly = false } = this.props;
     const { text } = this.state;
 
     // TODO: draft.js/ parse line breaks as <p> + </p>
@@ -87,7 +88,7 @@ export default class ParsingTextbox extends
           <FormGroup>
             <Row noGutters={true}>
               <Col>
-                <Input type="textarea" value={text} onChange={this.update} />
+                <Input type="textarea" value={text} onChange={this.update} disabled={readOnly} />
               </Col>
             </Row>
             <Row className="parsing-textbox__bottom-bar" noGutters={true}>
@@ -97,7 +98,9 @@ export default class ParsingTextbox extends
                 {`Saved ${moment(this.lastSaveTime).fromNow()}.`}
               </Col>
               <Col xs="3" className="parsing-textbox__save-button-col">
-                <Button className="parsing-textbox__save-button" size="sm" onClick={this.onClick}>Save</Button>
+                <Button className="parsing-textbox__save-button" size="sm" onClick={this.onClick} disabled={readOnly}>
+                  Save
+                </Button>
               </Col>
             </Row>
           </FormGroup>

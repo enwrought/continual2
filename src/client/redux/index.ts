@@ -1,11 +1,14 @@
 import { all } from 'redux-saga/effects';
 
-import { Redux } from 'lib';
+import { Redux } from '../../lib';
 
 import { combineReducers } from 'redux';
 import { commonSaga } from './common/sagas';
 import { diarySaga } from './diary/sagas';
 import { diaryReducer } from './diary/reducers';
+
+export * from './common/actions';
+export * from './diary/actions';
 
 export const reducers = combineReducers({
   // TODO: implement grabbing user info

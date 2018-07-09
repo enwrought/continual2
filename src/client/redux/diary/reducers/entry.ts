@@ -1,11 +1,28 @@
 import { fromJS, Record } from 'immutable';
 
-import { Redux } from '../../../../lib';
+import { Redux } from 'lib';
 
 import { CommonActions, FetchFromServerAction } from '../../common/actions';
 import { EntryStoreRecord } from '../../types';
-import { ContentActions } from '../actions';
-import { SaveEntryFromServerAction, RetrieveEntriesFromServerAction } from '../actions/content';
+import {
+ ContentActions,
+ ReturnEntryShort,
+ RetrieveEntriesFromServerAction,
+ SaveEntryFromServerAction,
+} from '../actions';
+
+const loadEntriesFromServer = (forDrafts: boolean) => {
+  return (state: EntryStoreRecord, action: RetrieveEntriesFromServerAction) => {
+    const items = {};
+    const mapper = forDrafts ? (item: ReturnEntryShort) => item.isDraft : (item: ReturnEntryShort) => !item.isDraft;
+    action.payload.filter(mapper).forEach((item) => {
+      items[item.entryId] = item;
+    });
+    return state.setIn(['items'], items).setIn(
+      ['server'], { status: 'OK', statusLastUpdate: Date.now() }
+    );
+  };
+};
 
 const draftsReducerMap = {
   [ContentActions.CREATE_NEW_ENTRY]: (state: EntryStoreRecord, action: FetchFromServerAction) => {
@@ -21,18 +38,14 @@ const draftsReducerMap = {
   [ContentActions.SAVE_ENTRY_FROM_SERVER_FAILURE]: (state: EntryStoreRecord, action: { type: string }) => {
     return state.setIn(['server'], { status: 'FAILED', statusLastUpdate: Date.now() });
   },
+  [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: loadEntriesFromServer(true),
 };
 
 const entriesReducerMap = {
   [ContentActions.LOAD_ENTRIES_FROM_SERVER]: (state: EntryStoreRecord, action: FetchFromServerAction) => {
     return state.setIn(['server'], { status: 'FETCHING ENTRIES', statusLastUpdate: Date.now() });
   },
-  [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: (state: EntryStoreRecord,
-                                                      action: RetrieveEntriesFromServerAction) => {
-    return state.setIn(['items'], action.payload.items).setIn(
-      ['server'], { status: 'OK', statusLastUpdate: Date.now() }
-    );
-  },
+  [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: loadEntriesFromServer(false),
 };
 
 const defaultState = new EntryStoreRecord({

@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { clientEntryService } from '../lostAndFound';
+import { withProps } from 'recompose';
 
 const withGrid = <T extends {}>(BaseComponent: React.SFC<T>) => {
   // TODO: implement this Grid wrapper?
+  // TODO: implement this as a render prop?
   return null;
 };
 

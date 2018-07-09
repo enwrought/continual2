@@ -51,7 +51,7 @@ export class UserController {
     @Query() query: GetEntriesQuery
   ): Promise<ReturnEntriesShortDTO[]> {
     console.log({ id, query, action: 'getEntriesShort' });
-    return this.entryService.getEntriesShort(id, query.length);
+    return this.entryService.getEntriesShort(id, query.length, query.includeDrafts);
   }
 
   @ApiOperation({ title: 'Create a new entry.' })

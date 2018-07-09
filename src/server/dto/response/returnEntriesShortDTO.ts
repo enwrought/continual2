@@ -12,4 +12,7 @@ export class ReturnEntriesShortDTO {
 
   @ApiModelProperty()
   text: string;
+
+  @ApiModelProperty()
+  isDraft: boolean;
 }

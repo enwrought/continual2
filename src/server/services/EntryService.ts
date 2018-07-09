@@ -93,10 +93,11 @@ export class EntryService {
    * TODO: query to search for entries within some time period
    * @param {string} userId Entries are from this user
    * @param {int} length Max number of characters before truncating the entry text 
+   * @param {boolean} includeDrafts Whether to include drafts and non-public entries, needs authentication
+   * TODO: authentication
    */
   getEntriesShort(
-    userId: string, length: number = 40,
-    filterPrivate: boolean = true
+    userId: string, length: number = 40, includeDrafts: boolean = false
   ): Promise<ReturnEntriesShortDTO[]> {
     return this.entryRepository
       .createQueryBuilder('entry')
@@ -105,12 +106,13 @@ export class EntryService {
       .getMany()
       .then((entries: Entry[]) => {
         const items = entries
-          .filter(entry => !filterPrivate || (!entry.isDraft && entry.isPublic))
+          .filter(entry => includeDrafts || (!entry.isDraft && entry.isPublic))
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
             date: new Date(entry.createdTime),
-            text: entry.text.substr(0, length)
+            text: entry.text.substr(0, length),
+            isDraft: entry.isDraft
           }));
         return items;
       }
