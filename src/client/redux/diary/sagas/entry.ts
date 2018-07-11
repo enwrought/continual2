@@ -1,6 +1,8 @@
 import { put, takeLatest, select } from 'redux-saga/effects';
+
 import { CommonActions } from '../../common/actions';
 import { ContentActions } from '../actions';
+import { getEntryInfo, getLatestDraft } from '../selectors';
 import { ClientReduxStore } from '../../types';
 
 // TODO: merge server-side entities, redux store, saga/action types
@@ -17,13 +19,6 @@ interface NewEntryAction {
     text: string;
   };
 }
-
-// TODO: break this up into smaller sections so that reselect caching will better handle
-//       changes to the different parts of the store
-const getEntryInfo = (store: ClientReduxStore) => ({
-  user: store.user,
-  entry: store.diary.drafts[store.diary.latestDraft] || { title: '', text: '' }
-});
 
 const getUserInfo = (store: ClientReduxStore) => store.user;
 
@@ -80,10 +75,68 @@ function* loadEntries() {
   });
 }
 
+interface UpdateEntryAction {
+  type: string;
+  payload: {
+    title: string;
+    text: string;
+  };
+}
+
+function* updateEntry(action: UpdateEntryAction) {
+  yield console.log('TODO');
+  const entryId = yield select(getLatestDraft);
+
+  yield put({
+    // TODO: rename FETCH_FROM_SERVER, this isn't quite what it does
+    type: CommonActions.FETCH_FROM_SERVER,
+    payload: {
+      endpoint: `entries/${entryId}`,
+      method: 'PATCH',
+      body: action.payload,
+
+      // TODO: the on____ is boilerplate, maybe wrap this in a function to fix
+      onSuccessActionType: ContentActions.UPDATE_ENTRY_ON_SERVER_SUCCESS,
+      onHttpErrorActionType: ContentActions.UPDATE_ENTRY_ON_SERVER_FAILURE,
+      onOtherErrorActionType: ContentActions.UPDATE_ENTRY_ON_SERVER_FAILURE,
+    }
+  });
+}
+
+function* newEntryIfNeeded() {
+  const draftId = yield select(getLatestDraft);
+  if (!draftId) {
+    // TODO: is this better or is it better to call directly?
+    yield put({ type: ContentActions.CREATE_NEW_ENTRY });
+  }
+}
+
+function* initializeStore() {
+  yield put({ type: ContentActions.LOAD_ENTRIES_FROM_SERVER });
+}
+
+export function* watchNewEntryIfNeeded() {
+  yield takeLatest(ContentActions.CREATE_NEW_ENTRY_IF_NEEDED, newEntryIfNeeded);
+}
+
+// TODO: this doesn't feel great, how do we manage what will trigger much later as a result of a single action?
+//       what about one-offs?
+export function* watchFinishLoadFromServer() {
+  yield takeLatest(ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS, newEntryIfNeeded);
+}
+
 export function* watchNewEntry() {
   yield takeLatest(ContentActions.CREATE_NEW_ENTRY, newEntry);
 }
 
 export function* watchLoadEntries() {
   yield takeLatest(ContentActions.LOAD_ENTRIES_FROM_SERVER, loadEntries);
+}
+
+export function* watchUpdateEntry() {
+  yield takeLatest(ContentActions.UPDATE_ENTRY, updateEntry);
+}
+
+export function* watchInitializeStore() {
+  yield takeLatest(ContentActions.INITIALIZE_STORE, initializeStore);
 }

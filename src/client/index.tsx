@@ -13,7 +13,7 @@ const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
 
-store.dispatch({ type: ContentActions.LOAD_ENTRIES_FROM_SERVER });
+store.dispatch({ type: ContentActions.INITIALIZE_STORE });
 
 const rootEl = document.getElementById('app');
 ReactDOM.render(

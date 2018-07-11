@@ -37,4 +37,9 @@ The UX and requirements are still being defined, but in general the applications
    and making things easier to use, without too much typing.
 3. Make the user comfortable. In particular, it needs to be clear that data is saved properly, and precisely what data (if any) is shared.
 4. Offline/failure-resistent - ie: if a server is out, the application should still work with what information is saved in localstorage. Requests
-   can still be made, but it is clear that the information is not saved on the server, but will be as soon as you are online. Localstorage + PWA work are still TODOs for this.
+   can still be made, but it is clear that the information is not saved on the server, but will be as soon as you are online.
+
+UX in general still needs a lot of work and thought. For data, need to investigate compliance with laws and some design patterns.
+
+For (4), localstorage + PWA work are still TODOs for this. Also, currently the app is 3 MB (before any optimization), so it might
+be worth investigating something lighter like Preact, especially if the components are relatively simple.

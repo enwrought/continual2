@@ -41,6 +41,31 @@ const draftsReducerMap = {
   [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: loadEntriesFromServer(true),
 };
 
+const initDraft = {
+  date: 0,
+  entryId: '',
+  text: '',
+  title: '',
+  isDraft: true
+};
+
+const updateLatestDraft = (state: string | undefined, action: RetrieveEntriesFromServerAction) => {
+  return action.payload.filter(item => item.isDraft).reduce(
+    (currNewest: ReturnEntryShort, currItem: ReturnEntryShort) => {
+      if (currNewest && currNewest.date > currItem.date) {
+        return currNewest;
+      }
+      return currItem;
+    },
+    initDraft
+  ).entryId;
+};
+
+const latestDraftReducerMap = {
+  [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: updateLatestDraft,
+  [ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS]: updateLatestDraft,
+};
+
 const entriesReducerMap = {
   [ContentActions.LOAD_ENTRIES_FROM_SERVER]: (state: EntryStoreRecord, action: FetchFromServerAction) => {
     return state.setIn(['server'], { status: 'FETCHING ENTRIES', statusLastUpdate: Date.now() });
@@ -83,5 +108,6 @@ const tmpDummyEntryDefaultState = new EntryStoreRecord({
   },
 });
 
+export const latestDraftReducer = Redux.createReducer('', latestDraftReducerMap);
 export const draftReducer = Redux.createReducer(defaultState, draftsReducerMap);
 export const entriesReducer = Redux.createReducer(tmpDummyEntryDefaultState, entriesReducerMap);

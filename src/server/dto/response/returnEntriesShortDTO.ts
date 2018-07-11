@@ -8,7 +8,7 @@ export class ReturnEntriesShortDTO {
   title: string;
 
   @ApiModelProperty()
-  date: Date;
+  date: number;
 
   @ApiModelProperty()
   text: string;

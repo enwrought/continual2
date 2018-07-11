@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn } from 'typeorm';
 import { Entry } from './Entry';
 import { Tag } from './Tag';
 import { Size } from 'lib';
@@ -25,8 +25,8 @@ export class User {
   @Column('text')
   bio: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  createdTime: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdTime: number;
 
   @OneToMany(type => Entry, entry => entry.author, { onDelete: 'CASCADE' })
   entries: Entry[];
@@ -45,7 +45,6 @@ export class User {
       this.dob = dob;
       this.gender = gender;
       this.bio = bio;
-      this.createdTime = (new Date()).toISOString();
     }
   }
 

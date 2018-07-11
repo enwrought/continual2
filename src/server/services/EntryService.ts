@@ -60,7 +60,7 @@ export class EntryService {
     if (!this.validateEntry(entry)) {
       throw new NotAcceptableException('Cannot publish entry...');
     }
-    const currTime = (new Date()).toISOString();
+    const currTime = Date.now();
     entry.published = currTime;
     entry.isDraft = false;
     entry.isPublic = true;
@@ -110,7 +110,7 @@ export class EntryService {
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
-            date: new Date(entry.createdTime),
+            date: entry.createdTime,
             text: entry.text.substr(0, length),
             isDraft: entry.isDraft
           }));
