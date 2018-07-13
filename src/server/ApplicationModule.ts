@@ -25,7 +25,6 @@ import { Tag, Entry, User } from './entities';
 })
 export class ApplicationModule {}
 
-
 // export function getTestApplicationModule(dbName: string) {
 //   // Create db
 //   // TODO: create db

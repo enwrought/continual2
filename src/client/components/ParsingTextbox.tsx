@@ -1,15 +1,19 @@
+import * as moment from 'moment';
 import * as React from 'react';
-import { Form, FormGroup, Input, Button } from 'reactstrap';
-import Textbox from './Textbox';
-import HashtagComponent from './HashtagComponent';
+import { Container, Row, Col, Form, FormGroup, Input, Button } from 'reactstrap';
+// TODO: figure out best way in using classnames.bind() and bind with styles
+import * as cx from 'classnames';
 
-import { Hashtag, Size } from 'lib';
+import { Hashtag, Size } from '../../lib';
+import { HashtagComponent } from './HashtagComponent';
 
 interface ParsingTextboxProps {
   value?: string;
   delay?: number;
   onProcess: (value: string) => void;
   onSave: (value: string) => void;
+  classNames?: string;
+  readOnly?: boolean;
 }
 
 interface ParsingTextboxState {
@@ -18,22 +22,18 @@ interface ParsingTextboxState {
 
 const DEFAULT_DELAY = 500;
 
-export default class ParsingTextbox extends 
-                     React.PureComponent<ParsingTextboxProps, ParsingTextboxState> {
-
-  state = {
-    text: this.props.value || ''
-  };
+// TODO: implement this as a SFC with a render prop handling the on delay (or move the on delay to redux saga)
+export default class ParsingTextbox extends
+                     React.PureComponent<ParsingTextboxProps> {
 
   static defaultProps = {
-    delay: DEFAULT_DELAY
+    // delay: DEFAULT_DELAY
+    delay: 0
   };
 
+  lastProcessedValue = this.props.value || '';
   timer = 0;
-
-  componentDidMount() {
-    console.log({ state: 'did mount', time: new Date() });
-  }
+  lastSaveTime = new Date();
 
   updateTimer = (value: string) => {
     const { delay, onProcess } = this.props;
@@ -43,6 +43,8 @@ export default class ParsingTextbox extends
     this.timer = setTimeout(
       () => {
         onProcess(value);
+        this.lastProcessedValue = value;
+        this.lastSaveTime = new Date();
       },
       delay
     );
@@ -50,20 +52,20 @@ export default class ParsingTextbox extends
 
   update = (newValue: React.FormEvent<HTMLInputElement>) => {
     const text = newValue.currentTarget.value;
-    this.setState({ text }, () => this.updateTimer(text));
+    this.updateTimer(text);
   }
 
   onClick = (event: React.MouseEvent<HTMLElement>) => {
     const { onSave } = this.props;
-    const { text } = this.state;
-    onSave(text);
+    onSave(this.lastProcessedValue);
   }
 
   render() {
-    const { text } = this.state;
+    const { classNames, readOnly = false, value = '' } = this.props;
 
-    // TODO - update only after the delay
-    const stuff = Hashtag.parseHashtags(text);
+    // TODO: draft.js/ parse line breaks as <p> + </p>
+    // TODO: - update only after the delay
+    const stuff = Hashtag.parseHashtags(value);
 
     const content = stuff.map((str, index) => {
       if (str && str.substr(0, 1) !== '#') {
@@ -73,21 +75,34 @@ export default class ParsingTextbox extends
       return <HashtagComponent tag={tag} subtags={subtags} key={index} />;
     });
 
+    const combinedClassNames = cx('parsing-textbox', classNames);
+
     return (
-      <Form>
-        <div className="parsing__preview">
-          <div className="parsing__preview-text">
-            Preview
-          </div>
+      <Form className={combinedClassNames}>
+        <div className="parsing-textbox__preview">
           {content}
         </div>
-        <FormGroup>
-          <Input type="textarea" value={text} onChange={this.update} />
-          <div>
-            <Button onClick={this.onClick}>Save</Button>
-          </div>
-        </FormGroup>
-        <Textbox />
+        <Container>
+          <FormGroup>
+            <Row noGutters={true}>
+              <Col>
+                <Input type="textarea" value={value} onChange={this.update} disabled={readOnly} />
+              </Col>
+            </Row>
+            <Row className="parsing-textbox__bottom-bar" noGutters={true}>
+              <Col className="parsing-textbox__save-time" xs="9">
+                {/* TODO: this probably needs to be passed in */}
+                {/* TODO: Relative time needs this to be refreshed every so often... */}
+                {`Saved ${moment(this.lastSaveTime).toDate()}.`}
+              </Col>
+              <Col xs="3" className="parsing-textbox__save-button-col">
+                <Button className="parsing-textbox__save-button" size="sm" onClick={this.onClick} disabled={readOnly}>
+                  Save
+                </Button>
+              </Col>
+            </Row>
+          </FormGroup>
+        </Container>
       </Form>
     );
   }

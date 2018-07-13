@@ -1,29 +1,26 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-// import { AppContainer } from 'react-hot-loader';
+import { Provider } from 'react-redux';
+import { applyMiddleware, compose, createStore } from 'redux';
+import { default as createSagaMiddleware } from 'redux-saga';
 import { BrowserRouter } from 'react-router-dom';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 import App from './App';
+import { reducers, rootSaga, ContentActions } from './redux';
+
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+sagaMiddleware.run(rootSaga);
+
+store.dispatch({ type: ContentActions.INITIALIZE_STORE });
 
 const rootEl = document.getElementById('app');
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   rootEl
 );
-
-// Hot Module Replacement API
-// if (module.hot) {
-//   module.hot.accept('./App', () => {
-//     const NextApp = require<{default: typeof App}>('./App').default;
-//     ReactDOM.render(
-//       <AppContainer>
-//         <BrowserRouter>
-//           <NextApp />
-//         </BrowserRouter>
-//       </AppContainer>
-//       ,
-//       rootEl
-//     );
-//   });
-// }

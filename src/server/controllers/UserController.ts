@@ -1,10 +1,17 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { InsertResult } from 'typeorm';
 
 import { EntryService, UserService } from '../services';
 import { User, Entry } from '../entities';
-import { CreateUserDTO, ModifyEntryDTO, ReturnEntriesShortDTO, GetEntriesQuery } from '../dto';
-import { InsertResult } from 'typeorm';
+import {
+  CreateUserDTO,
+  GetEntriesQuery,
+  ModifyEntryDTO,
+  OptionalErrorResponse,
+  PublicUserInfoDTO,
+  ReturnEntriesShortDTO
+} from '../dto';
 
 @ApiBearerAuth()
 @ApiUseTags('diary')
@@ -26,11 +33,12 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ title: 'Get information about a user' })
-  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 200, description: 'OK', type: PublicUserInfoDTO })
   @ApiResponse({ status: 500, description: 'Internal error.' })
-  async getUser(@Param('id') id: string): Promise<User> {
+  async getUser(@Param('id') id: string): Promise<PublicUserInfoDTO> {
     console.log({ id, action: 'getUser' });
-    return this.userService.getUser(id);
+    const user = await this.userService.getUser(id);
+    return new PublicUserInfoDTO(user);
   }
 
   @ApiOperation({ title: 'Get a list of user entries' })
@@ -43,7 +51,7 @@ export class UserController {
     @Query() query: GetEntriesQuery
   ): Promise<ReturnEntriesShortDTO[]> {
     console.log({ id, query, action: 'getEntriesShort' });
-    return this.entryService.getEntriesShort(id, query.length);
+    return this.entryService.getEntriesShort(id, query.length, query.includeDrafts);
   }
 
   @ApiOperation({ title: 'Create a new entry.' })
@@ -52,6 +60,9 @@ export class UserController {
   @Post(':id/entries')
   async createEntry(@Param('id') id: string, @Body() body: ModifyEntryDTO) {
     console.log({ id, body, action: 'createEntry' });
-    return this.entryService.createEntry(id, body);
+    return this.entryService.createEntry(id, body).catch((err) => {
+      console.log({ err });
+      throw new HttpException(`Could not find user with id '${id}'.`, HttpStatus.NOT_FOUND);
+    });
   }
 }

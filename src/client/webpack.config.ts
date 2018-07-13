@@ -1,13 +1,12 @@
-import * as webpack from 'webpack';
-import * as path from 'path';
+import * as dotenv from 'dotenv';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as HtmlWebpackTemplate from 'html-webpack-template';
-// import webpack from 'webpack';
-// import path from 'path';
-// import HtmlWebpackPlugin from 'html-webpack-plugin';
-// import HtmlWebpackTemplate from 'html-webpack-template';
+import * as path from 'path';
+import * as webpack from 'webpack';
 
 import { AppConstants } from 'lib';
+
+dotenv.config({ path: __dirname + '/.env' });
 
 /*
  * Note - Bryant - inspired by:
@@ -15,18 +14,18 @@ import { AppConstants } from 'lib';
  * https://github.com/Glavin001/react-hot-ts/blob/master/webpack.config.ts
  * https://www.typescriptlang.org/docs/handbook/react-&-webpack.html
  */
-// TODO: separate out frontend and backend
 const config: webpack.Configuration[] = [{
   context: path.resolve(__dirname),
   entry: [
     // 'react-hot-loader/patch',
+    'whatwg-fetch',
     './index.tsx'
   ],
-  // entry: './src/client/index.tsx',
 
   output: {
     path: path.join(__dirname, 'dist/client'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
     // TODO: publicpath?
   },
 
@@ -35,11 +34,7 @@ const config: webpack.Configuration[] = [{
   resolve: {
     // TODO: resolve aliases if needed later
     // alias: {},
-    // extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
     extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js', '.json'],
-    // alias: {
-    //   lib: path.resolve(__dirname, '../lib/')
-    // }
   },
 
   plugins: [
@@ -54,11 +49,12 @@ const config: webpack.Configuration[] = [{
 
       // HtmlWebpackTemplate params
       appMountId: AppConstants.APP_MOUNT_ID
-      // appMountId: 'app'
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    // new webpack.optimize.DedupePlugin()
+    new webpack.DefinePlugin({
+      'process.env': dotenv.parse
+    })
   ],
 
   mode: 'development',
@@ -68,7 +64,6 @@ const config: webpack.Configuration[] = [{
       {
         test: /\.tsx?$/,
         use: [
-          // 'react-hot-loader/webpack',
           {
             loader: 'awesome-typescript-loader',
             options: {
@@ -76,29 +71,6 @@ const config: webpack.Configuration[] = [{
             },
           }
         ],
-        // [
-        //   {
-        //     loader: 'awesome-typescript-loader',
-        //     options: {
-        //       configFileName: 'tsconfig.client.json'
-        //     },
-        //   },
-        //   {
-        //     loader: 'babel-loader',
-        //     options: {
-        //       presets: [
-        //         '@babel/preset-env',
-        //         '@babel/react',
-        //       ],
-        //       plugins: [
-        //         '@babel/plugin-syntax-typescript',
-        //         '@babel/plugin-syntax-decorators',
-        //         '@babel/plugin-syntax-jsx',
-        //         'react-hot-loader/babel',
-        //       ],
-        //     }
-        //   }
-        // ],
         exclude: [
           path.resolve(__dirname, 'node_modules')
         ],
@@ -110,6 +82,26 @@ const config: webpack.Configuration[] = [{
         enforce: 'pre',
         test: /\.jsx?$/,
         loader: 'source-map-loader'
+      },
+      {
+        test: /\.scss/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       }
     ]
   },

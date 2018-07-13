@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { Switch, Route } from 'react-router-dom';
+
+import { AppHeader, AppMain } from './layout';
 import { MainPage, TagPage } from './pages';
 
-export default class App extends React.PureComponent<{}, {}> {
+// TODO: find out best practice for importing CSS files
+require('./css/index.scss');
+
+export default class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <div className="header" />
-        <div className="main">
-          <Switch>
-            <Route exact={true} path="/" component={MainPage} />
-            <Route path="/tags" component={TagPage} />
-          </Switch>
-        </div>
+        <AppHeader />
+        <AppMain />
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './User';
 import { ModifyEntryDTO } from '../dto';
 
@@ -17,14 +17,14 @@ export class Entry {
   @Column({ default: 0 })
   isPublic: boolean;
 
-  @Column('datetime')
-  created: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdTime: number;
 
-  @Column({ type: 'datetime', nullable: true })
-  published?: string;
+  @Column({ type: 'timestamp', nullable: true })
+  published?: number;
 
-  @Column('datetime')
-  lastUpdated: string;
+  @UpdateDateColumn({ type: 'timestamp' })
+  lastUpdated: number;
 
   @Column({ length: 36 })
   title: string;
@@ -34,16 +34,12 @@ export class Entry {
 
   constructor(entryValues?: ModifyEntryDTO) {
     if (entryValues) {
-      const currTime = (new Date()).toISOString();
-      this.setValues(entryValues, currTime);
-      this.created = currTime;
+      this.setValues(entryValues);
     }
   }
 
-  setValues(entryValues: ModifyEntryDTO, currTime: string = (new Date()).toISOString()) {
+  setValues(entryValues: ModifyEntryDTO) {
     this.title = entryValues.title || '';
     this.text = entryValues.text || '';
-    this.lastUpdated = currTime;
   }
-
 }

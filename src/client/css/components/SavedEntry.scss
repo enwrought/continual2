@@ -1,0 +1,28 @@
+
+.saved-entry {
+  box-sizing: border-box;
+
+  .saved-entry__title-wrapper {
+    position: relative;
+    margin-bottom: $padding-small;
+
+    .saved-entry__title {
+      @extend %ellipses-wrapper;
+      font-size: $font-larger;
+    }
+  
+    .saved-entry__date {
+      position: absolute;
+      right: 0;
+      padding-right: $padding-normal;
+      padding-top: $padding-normal;
+      font-size: $font-small;
+      color: $date-font-color;
+    }
+  }
+
+  .saved-entry__description {
+    font-size: $font-smaller;
+    margin: $padding-small 0;
+  }
+}

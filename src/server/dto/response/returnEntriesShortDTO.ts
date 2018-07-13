@@ -1,4 +1,4 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiModelProperty } from '@nestjs/swagger';
 
 export class ReturnEntriesShortDTO {
   @ApiModelProperty()
@@ -8,8 +8,11 @@ export class ReturnEntriesShortDTO {
   title: string;
 
   @ApiModelProperty()
-  date: Date;
+  date: number;
 
   @ApiModelProperty()
   text: string;
+
+  @ApiModelProperty()
+  isDraft: boolean;
 }

@@ -1,11 +1,39 @@
 import * as React from 'react';
-import ParsingTextbox from './ParsingTextbox';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
-interface FTProps {
-  date: string; // TODO - convert to Date object type
+import ParsingTextbox from './ParsingTextbox';
+import { ClientReduxStore } from '../redux/types';
+import { getEntryInfo } from '../redux/diary/selectors';
+
+interface Action {
+  type: string;
+  payload: {
+    body: string
+  };
+}
+
+// const NEW_ENTRY_ID = 'NEW_ENTRY';
+
+interface PropsFromReduxState {
+  initValue: string;
+  readOnly: boolean;
+}
+
+interface PropsFromDispatch {
+  // createNewEntryIfNeeded: () => Action;
+  saveToServer: (title: string, text: string) => Action;
+}
+
+type JoinedProps = PropsFromReduxState & PropsFromDispatch;
+
+// TODO: this typescript thing is backwards - FTProps should not have to depend on the parent
+interface FTProps extends JoinedProps {
+  // readonly id: string;
 }
 
 interface FTState {
+  currentText: string;
   savedText: string;
   savedTime: Date;
 }
@@ -15,30 +43,72 @@ interface FTState {
 //   pattern: RegExp,
 //   splitPattern?: RegExp
 // }
-
-export default class FormattingTextbox extends React.PureComponent<FTProps, FTState> {
+class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
 
   state = {
+    currentText: '',
     savedText: '',
     savedTime: new Date()
   };
 
   onProcess = (value: string) => {
-    // TODO
+    // TODO: implement
+    this.setState({ currentText: value });
   }
 
   onSave = (value: string) => {
-    // TODO save and then update state when sucessful
+    // TODO: save and then update state when sucessful
+    const { saveToServer } = this.props;
 
-    this.setState({
-      savedText: value,
-      savedTime: new Date()
-    });
+    this.setState(
+      {
+        savedText: value,
+        savedTime: new Date()
+      },
+      () => {
+        console.log('sending');
+        saveToServer('Temporary title...', value);
+      }
+    );
+  }
+
+  componentWillReceiveProps(nextProps: FTProps) {
+    // const { createNewEntryIfNeeded } = this.props;
+    // createNewEntryIfNeeded();
+    this.setState({ currentText: nextProps.initValue });
   }
 
   render() {
+    const { readOnly } = this.props;
+    const { currentText } = this.state;
+
     return (
-      <ParsingTextbox onProcess={this.onProcess} onSave={this.onSave} />
+      <ParsingTextbox
+        classNames="formatting-textbox"
+        onProcess={this.onProcess}
+        onSave={this.onSave}
+        readOnly={readOnly}
+        value={currentText}
+      />
     );
   }
 }
+
+const FormattingTextbox = connect<PropsFromReduxState, PropsFromDispatch, void>(
+  (state: ClientReduxStore) => {
+    const initValue = getEntryInfo(state).entry.text;
+    const readOnly = state.diary.drafts.get('server').status !== 'OK';
+
+    return {
+      initValue,
+      readOnly
+    };
+  },
+  (dispatch: Function) => ({
+    // createNewEntryIfNeeded: () => dispatch({ type: 'CREATE_NEW_ENTRY_IF_NEEDED' }),
+    // TODO: should this save to state first and then try to indirectly call to save to server?
+    saveToServer: (title: string, text: string) => dispatch({ type: 'UPDATE_ENTRY', payload: { title, text } }),
+  })
+)(FormattingTextboxChild);
+
+export default FormattingTextbox;

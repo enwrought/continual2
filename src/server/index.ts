@@ -12,15 +12,16 @@ async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
   const options = new DocumentBuilder()
-    .setTitle('Users API')
-    .setDescription('Create users and entries.')
-    .setVersion('0.0.1')
-    .addTag('diary')
-    .addBearerAuth()
-    .build();
+  .setTitle('Users API')
+  .setDescription('Create users and entries.')
+  .setVersion('0.0.1')
+  .addTag('diary')
+  .addBearerAuth()
+  .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
+  app.enableCors();
   await app.listen(port);
   console.log(`Started server on port ${port}.`);
 }
