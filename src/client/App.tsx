@@ -6,7 +6,7 @@ import { MainPage, TagPage } from './pages';
 // TODO: find out best practice for importing CSS files
 require('./css/index.scss');
 
-export default class App extends React.PureComponent {
+export default class App extends React.Component {
   render() {
     return (
       <div className="app">
