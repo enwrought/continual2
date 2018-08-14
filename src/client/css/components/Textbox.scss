@@ -1,7 +1,11 @@
-.formatting-textbox {
+.textbox {
   textarea.form-control {
     width: 100%;
     box-sizing: border-box;
     min-height: 120px;
+  }
+
+  .container {
+    padding: 0;
   }
 }

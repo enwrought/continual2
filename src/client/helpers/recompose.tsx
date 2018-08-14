@@ -53,7 +53,7 @@ export const withDelay = <T extends {}>(propFnName: string, delay: number) =>
         this.timer = setTimeout(
           () => {
             console.log(`Executing onLatestUpdate with timer ${this.timer}...`);
-            onLatestUpdate();
+            onLatestUpdate.apply(null, arguments);
             this.timer = 0;
           },
           delay

@@ -111,7 +111,7 @@ export class EntryService {
             entryId: entry.id,
             title: entry.title,
             date: entry.createdTime,
-            text: entry.text.substr(0, length),
+            text: length <= 0 ? entry.text : entry.text.substr(0, length),
             isDraft: entry.isDraft
           }));
         return items;

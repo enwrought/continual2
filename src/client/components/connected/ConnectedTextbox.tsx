@@ -38,21 +38,19 @@ interface ConnectedTextboxChildProps extends JoinedProps {
 }
 
 // TODO: change according to Textbox changes
-export class ConnectedTextboxChild extends React.PureComponent<ConnectedTextboxChildProps> {
+const ConnectedTextboxChild: React.SFC<ConnectedTextboxChildProps> = ({
+  initValue, saveToServer, updateTime, ...otherProps
+}: ConnectedTextboxChildProps) => {
+  return (
+    <Textbox
+      onUpdate={(value: string) => saveToServer('random title', value)}
+      initValue={initValue}
+      updateTime={updateTime}
+    />
+  );
+};
 
-  render() {
-    const { initValue, saveToServer, updateTime, ...otherProps } = this.props;
-
-    return (
-      <Textbox
-        onUpdate={(value: string) => saveToServer('random title', value)}
-        initValue={initValue}
-        updateTime={updateTime}
-      />
-    );
-  }
-}
-
+// TODO: combine with TextStatusBar and validation?
 const enhance = compose(
   connect<PropsFromReduxState, PropsFromDispatch, void>(
     (state: ClientReduxStore) => {

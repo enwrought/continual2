@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Container } from 'reactstrap';
 
-import { FormattingTextbox, ParsingTextbox, ConnectedSavedEntry } from '../components';
+import { ConnectedSavedEntry } from '../components';
 import { ConnectedTextbox } from '../components/connected/ConnectedTextbox';
 
 export const MainPage: React.SFC = () => {
@@ -12,7 +12,6 @@ export const MainPage: React.SFC = () => {
       <span className="saved-entry">
         <ConnectedSavedEntry />
       </span>
-      <FormattingTextbox />
       <ConnectedTextbox />
     </Container>
   );

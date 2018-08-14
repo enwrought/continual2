@@ -66,7 +66,7 @@ function* loadEntries() {
   yield put({
     type: CommonActions.FETCH_FROM_SERVER,
     payload: {
-      endpoint: `users/${userInfo.id}/entries?includeDrafts=true`,
+      endpoint: `users/${userInfo.id}/entries?includeDrafts=true&length=0`,
       method: 'GET',
       onSuccessActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS,
       onHttpErrorActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_FAILURE,
