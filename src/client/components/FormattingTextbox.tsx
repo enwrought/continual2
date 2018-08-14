@@ -27,7 +27,10 @@ interface PropsFromDispatch {
 
 type JoinedProps = PropsFromReduxState & PropsFromDispatch;
 
-// TODO: this typescript thing is backwards - FTProps should not have to depend on the parent
+// This typescript inheritance feels backwards - FTProps should not have to depend on the parent
+// but it's probably okay since we won't use FormattingTextboxChild outside of the hoc
+// If we do, we can create a separate component that wraps around the child component
+// TODO: only expose required typescript props and not internal child props
 interface FTProps extends JoinedProps {
   // readonly id: string;
 }
@@ -53,7 +56,16 @@ class FormattingTextboxChild extends React.PureComponent<FTProps, FTState> {
 
   onProcess = (value: string) => {
     // TODO: implement
-    this.setState({ currentText: value });
+    const { saveToServer } = this.props;
+    this.setState(
+      {
+        currentText: value
+      },
+      () => {
+        console.log('sending');
+        saveToServer('Temporary title...', value);
+      }
+    );
   }
 
   onSave = (value: string) => {

@@ -4,7 +4,7 @@ import { ClientReduxStore } from '../../types';
 //       changes to the different parts of the store
 export const getEntryInfo = (store: ClientReduxStore) => ({
   user: store.user,
-  entry: store.diary.drafts.get('items')[store.diary.latestDraft] || { title: '', text: '' }
+  entry: store.diary.drafts.get('items')[store.diary.latestDraft] || { title: '', text: '', date: new Date(0) }
 });
 
 export const getLatestDraft = (store: ClientReduxStore) => {

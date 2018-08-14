@@ -12,10 +12,10 @@ interface Param {
 interface Page extends RouteComponentProps<Param> {
 }
 
+// TODO: connect to redux and list all entries in store with tag
 export const TagPage: React.SFC<Page> = (props: Page) => {
   const [tag, ...subtags] = props.match.params['0'].split('/');
 
-  // TODO: use hashtag split helper
   return (
     <div>
       Tag:&nbsp;

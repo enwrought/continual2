@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Container } from 'reactstrap';
 
 import { FormattingTextbox, ParsingTextbox, ConnectedSavedEntry } from '../components';
+import { ConnectedTextbox } from '../components/connected/ConnectedTextbox';
 
 export const MainPage: React.SFC = () => {
   return (
@@ -12,6 +13,7 @@ export const MainPage: React.SFC = () => {
         <ConnectedSavedEntry />
       </span>
       <FormattingTextbox />
+      <ConnectedTextbox />
     </Container>
   );
 };
