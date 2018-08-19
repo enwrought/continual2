@@ -12,7 +12,7 @@ interface DemographicsInfo {
   gender?: Gender;  // TODO - fix enum with typescript
 }
 
-function estimatedAge(info: DemographicsInfo): number {
+export function estimatedAge(info: DemographicsInfo): number {
   // TODO - find somewhere to poll this info?
   return 75;
 }
@@ -20,5 +20,3 @@ function estimatedAge(info: DemographicsInfo): number {
 function getStatsInfo() {
   return;
 }
-
-export default {};

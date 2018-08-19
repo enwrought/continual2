@@ -5,7 +5,6 @@ import { compose, withState, pure, lifecycle } from 'recompose';
 import { Textbox } from '../Textbox';
 import { ClientReduxStore } from '../../redux/types';
 import { getEntryInfo } from '../../redux/diary/selectors';
-import { render } from '../../node_modules/@types/react-dom';
 
 interface Action {
   type: string;

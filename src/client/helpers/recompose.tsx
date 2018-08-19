@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { withProps } from 'recompose';
-import { render } from '../node_modules/@types/react-dom';
 
 const withGrid = <T extends {}>(BaseComponent: React.SFC<T>) => {
   // TODO: implement this Grid wrapper?

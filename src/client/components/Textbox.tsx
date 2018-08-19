@@ -3,10 +3,11 @@ import { Container, Row, Col, Form, FormGroup, Input, Button } from 'reactstrap'
 // TODO: figure out best way in using classnames.bind() and bind with styles
 import * as cx from 'classnames';
 import { compose, withState, withHandlers } from 'recompose';
-import { Hashtag, Size } from 'lib';
+import { Hashtag, Size, Parser } from 'lib';
 
 import { HashtagComponent } from './HashtagComponent';
 import { withDelay } from '../helpers';
+import { UserComponent } from './UserComponent';
 
 interface TextboxProps {
   initValue?: string;
@@ -24,11 +25,6 @@ interface TextboxState {
   value: string;
   time: number;
 }
-
-// TODO: this should not be a SFC and have fully uncontrolled state. The only way to get updates
-// is via an update function that is triggered only after several updates (also helpful for undo-handling if needed)
-
-// Redux-saga will use an additional delay before saving a draft to the server
 class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
 
   state = {
@@ -58,15 +54,22 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
     const { classNames, readOnly = false, ...otherProps } = this.props;
     const { value } = this.state;
 
-    // TODO: draft.js/ parse line breaks as <p> + </p>
-    const stuff = Hashtag.parseHashtags(value);
+    // TODO: Maybe better to parse out hashtags and users somewhere else
+    const tmp = Parser.parse(value);
 
-    const content = stuff.map((str, index) => {
-      if (str && str.substr(0, 1) !== '#') {
-        return str;
+    const content = tmp.map((parsedType, index) => {
+      const { type, match } = parsedType;
+      switch (type) {
+        case 'HASHTAG':
+          const [tag, ...subtags] = Hashtag.splitHashtag(match) || [''];
+          return <HashtagComponent tag={tag} subtags={subtags} key={index} />;
+        case 'USER':
+          const userName = match.substr(1);
+          return <UserComponent userName={match} key={index} />;
+        case 'NONE':
+        default:
+          return <span key={index}>{match}</span>;
       }
-      const [tag, ...subtags] = Hashtag.splitHashtag(str) || [''];
-      return <HashtagComponent tag={tag} subtags={subtags} key={index} />;
     });
 
     const combinedClassNames = cx('textbox', classNames);
@@ -91,7 +94,7 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
 
 // TODO: correct inner/outer generic types
 const enhance = compose<TextboxProps, TextboxProps>(
-  withDelay<TextboxProps>('onUpdate', 1000)
+  withDelay<TextboxProps>('onUpdate', 2500)
 );
 
 export const Textbox = enhance(TextboxChild);
