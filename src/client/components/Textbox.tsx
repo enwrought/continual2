@@ -14,6 +14,7 @@ interface TextboxProps {
   classNames?: string;
   readOnly?: boolean;
   onUpdate: (text: string) => void;
+  onPressEnter: (text: string) => void;
   updateTime?: number;
 }
 
@@ -37,6 +38,17 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
     const value = event.currentTarget.value;
 
     this.setState({ value }, () => onUpdate(value));
+  }
+
+  keyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const { onPressEnter } = this.props;
+
+    if (onPressEnter && event.key === 'Enter' && !event.shiftKey) {
+      onPressEnter(event.currentTarget.value);
+      // TODO: look up if this is okay to prevent update
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
   // TODO: also handle ID of the textbox in case it changes?
@@ -83,7 +95,13 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
         <FormGroup>
           <Row noGutters={true}>
             <Col>
-              <Input type="textarea" value={value} onChange={this.updateHandler} disabled={readOnly} />
+              <Input
+                type="textarea"
+                value={value}
+                onChange={this.updateHandler}
+                disabled={readOnly}
+                onKeyPress={this.keyPressHandler}
+              />
             </Col>
           </Row>
         </FormGroup>

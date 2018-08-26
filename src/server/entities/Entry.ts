@@ -9,7 +9,7 @@ export class Entry {
   id: string;
 
   @ManyToOne(type => User, author => author.entries)
-  author: User;
+  author: Promise<User>;
 
   @Column({ default: 1 })
   isDraft: boolean;
@@ -18,13 +18,13 @@ export class Entry {
   isPublic: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdTime: number;
+  createdTime: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  published?: number;
+  published?: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  lastUpdated: number;
+  lastUpdated: Date;
 
   @Column({ length: 36 })
   title: string;

@@ -1,5 +1,7 @@
 import { ClientReduxStore } from '../../types';
 
+export const getAllDrafts = (store: ClientReduxStore) => store.diary.drafts.toJS();
+
 // TODO: break this up into smaller sections so that reselect caching will better handle
 //       changes to the different parts of the store
 export const getEntryInfo = (store: ClientReduxStore) => ({

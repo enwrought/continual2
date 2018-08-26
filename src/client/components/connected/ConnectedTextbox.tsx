@@ -9,7 +9,7 @@ import { getEntryInfo } from '../../redux/diary/selectors';
 interface Action {
   type: string;
   payload: {
-    body: string
+    body?: string
   };
 }
 
@@ -22,6 +22,7 @@ interface PropsFromReduxState {
 interface PropsFromDispatch {
   // createNewEntryIfNeeded: () => Action;
   saveToServer: (title: string, text: string) => Action;
+  publishToServer: (title: string, text: string) => Action;
 }
 
 type JoinedProps = PropsFromReduxState & PropsFromDispatch;
@@ -38,11 +39,14 @@ interface ConnectedTextboxChildProps extends JoinedProps {
 
 // TODO: change according to Textbox changes
 const ConnectedTextboxChild: React.SFC<ConnectedTextboxChildProps> = ({
-  initValue, saveToServer, updateTime, ...otherProps
+  initValue, saveToServer, publishToServer, updateTime, ...otherProps
 }: ConnectedTextboxChildProps) => {
   return (
     <Textbox
+      // after saving on server, save on redux
       onUpdate={(value: string) => saveToServer('random title', value)}
+      // TODO: send value over as well
+      onPressEnter={(value: string) => publishToServer('random title', value)}
       initValue={initValue}
       updateTime={updateTime}
     />
@@ -67,7 +71,12 @@ const enhance = compose(
     (dispatch: Function) => ({
       // createNewEntryIfNeeded: () => dispatch({ type: 'CREATE_NEW_ENTRY_IF_NEEDED' }),
       // TODO: should this save to state first and then try to indirectly call to save to server?
-      saveToServer: (title: string, text: string) => dispatch({ type: 'UPDATE_ENTRY', payload: { title, text } }),
+      saveToServer: (title: string, text: string) => dispatch({
+        type: 'UPDATE_ENTRY', payload: { title, text }
+      }),
+      publishToServer: (title: string, text: string) => dispatch({
+        type: 'PUBLISH_ENTRY', payload: { title, text }
+      }),
     })
   )
 );
