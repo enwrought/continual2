@@ -2,9 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { toReactFragments } from '../helpers';
-import { SavedEntryProps, SavedEntry } from './SavedEntry';
-import { ClientReduxStore } from '../redux/types';
+import { toReactFragments } from '../../helpers';
+import { SavedEntryProps, SavedEntry } from '../SavedEntry';
+import { ClientReduxStore } from '../../redux/types';
 
 const mapStoreToProps = (store: ClientReduxStore): { items: SavedEntryProps[] } => {
   const entries = Object.keys(store.diary.entries.get('items')).map((entryId: string) => {

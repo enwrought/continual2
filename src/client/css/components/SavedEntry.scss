@@ -25,4 +25,8 @@
     font-size: $font-smaller;
     margin: $padding-small 0;
   }
+
+  &:hover {
+    outline: 1px solid black;
+  }
 }

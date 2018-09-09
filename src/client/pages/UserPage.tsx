@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { HashtagComponent } from '../components';
+import { UserComponent } from '../components';
 
 // TODO: export this somewhere
 
@@ -13,13 +13,13 @@ interface Page extends RouteComponentProps<Param> {
 }
 
 // TODO: connect to redux and list all entries in store with tag
-export const TagPage: React.SFC<Page> = (props: Page) => {
-  const [tag, ...subtags] = props.match.params['0'].split('/');
+export const UserPage: React.SFC<Page> = (props: Page) => {
+  const userName = props.match.params['0'];
 
   return (
     <div>
-      Tag:&nbsp;
-      <HashtagComponent tag={tag} subtags={subtags} />
+      User:&nbsp;
+      <UserComponent userName={userName} />
     </div>
   );
 };

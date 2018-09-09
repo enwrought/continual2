@@ -39,6 +39,15 @@ const draftsReducerMap = {
     return state.setIn(['server'], { status: 'FAILED', statusLastUpdate: Date.now() });
   },
   [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: loadEntriesFromServer(true),
+  [ContentActions.UPDATE_LATEST_DRAFT_AFTER_PUBLISH]: (
+    state: EntryStoreRecord, action: RetrieveEntriesFromServerAction
+  ) => {
+    console.log('hi');
+    const items = state.getIn(['items']);
+    delete items[action.payload.entries[0].entryId];
+    // TODO: this is not right, it should not need to have to setIn
+    return state.setIn(['items'], items);
+  },
 };
 
 const initDraft = {
@@ -61,9 +70,16 @@ const updateLatestDraft = (state: string | undefined, action: RetrieveEntriesFro
   ).entryId;
 };
 
+const updateLatestFromNewDraft = (state: string | undefined, action: SaveEntryFromServerAction) => {
+  return action.payload.id;
+};
+
 const latestDraftReducerMap = {
   [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: updateLatestDraft,
-  [ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS]: updateLatestDraft,
+  // [ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS]: updateLatestDraft,
+  [ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS]: updateLatestFromNewDraft,
+  // TODO: find latest draft from the things that are in the store
+  // [ContentActions.MOVE_DRAFT_TO_PUBLISHED]: updateLatestDraft,
 };
 
 const entriesReducerMap = {
@@ -71,6 +87,15 @@ const entriesReducerMap = {
     return state.setIn(['server'], { status: 'FETCHING ENTRIES', statusLastUpdate: Date.now() });
   },
   [ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS]: loadEntriesFromServer(false),
+  [ContentActions.MOVE_DRAFT_TO_PUBLISHED]: (state: EntryStoreRecord, action: RetrieveEntriesFromServerAction) => {
+    return state.setIn(
+      ['items'],
+      {
+        ...state.getIn(['items']),
+        [action.payload.entries[0].entryId]: action.payload.entries[0]
+      }
+    );
+  },
 };
 
 const defaultState = new EntryStoreRecord({

@@ -27,7 +27,7 @@ export class EntryService {
     const entry = new Entry(entryValues);
 
     return this.userRepository.findOneOrFail(userId).then((user: User) => {
-      entry.author = user;
+      entry.author = Promise.resolve(user);
       return this.entryRepository.save(entry);
     });
   }
@@ -41,8 +41,16 @@ export class EntryService {
    * TODO: is there a need to expose/not expose this function?
    * @param {Entry} entry
    */
-  validateEntry(entry: Entry) {
-    return entry.author && entry.text && entry.title && !entry.published;
+  async validateEntry(entry: Entry) {
+    const author = Promise.resolve(entry.author);
+    console.log({
+      author,
+      text: entry.text,
+      title: entry.title,
+      published: entry.published
+    });
+    // TODO: do we need author?????
+    return entry.text && entry.title && !entry.published;
   }
 
   /**
@@ -60,7 +68,7 @@ export class EntryService {
     if (!this.validateEntry(entry)) {
       throw new NotAcceptableException('Cannot publish entry...');
     }
-    const currTime = Date.now();
+    const currTime = new Date();
     entry.published = currTime;
     entry.isDraft = false;
     entry.isPublic = true;
@@ -68,20 +76,30 @@ export class EntryService {
     // TODO: generate short link.  Might need another query to database...
     // Maybe create a query that counts how many entries the user has with the
     // same title. (regex whitespace)
+    console.log({ published: entry });
+    return this.entryRepository.save(entry);
   }
 
   /**
    * Update entry. If there are no changes, don't save.
    */
   updateEntry(entryId: string, entryValues: ModifyEntryDTO): Promise<Entry> {
-    return this.entryRepository.findOneOrFail(entryId).then((entry: Entry) => {
+    return this.entryRepository.findOneOrFail(entryId).then(async (entry: Entry) => {
       entry.setValues(entryValues);
 
+      console.log({ entryValues });
       if (entryValues.publish) {
-        this.publishEntry(entry);
+        await this.publishEntry(entry).then(() => {
+          console.log({ saved_entry: entry });
+        });
+        return entry;
       }
 
-      return this.entryRepository.save(entry);
+      console.log({ entry });
+      await this.entryRepository.save(entry).then(() => {
+        console.log({ entry });
+      });
+      return entry;
     });
   }
 
@@ -110,8 +128,8 @@ export class EntryService {
           .map(entry => ({
             entryId: entry.id,
             title: entry.title,
-            date: entry.createdTime,
-            text: entry.text.substr(0, length),
+            date: entry.createdTime.getTime(),
+            text: length <= 0 ? entry.text : entry.text.substr(0, length),
             isDraft: entry.isDraft
           }));
         return items;

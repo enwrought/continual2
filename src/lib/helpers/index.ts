@@ -1,3 +1,11 @@
-export { default as Hashtag } from './hashtag';
-export { default as Statistics } from './statistics';
-export { default as Redux } from './redux';
+import * as  Hashtag from './hashtag';
+import * as Statistics from './statistics';
+import * as Redux from './redux';
+import * as Parser from './parser';
+
+export {
+  Hashtag,
+  Statistics,
+  Redux,
+  Parser
+};

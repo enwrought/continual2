@@ -99,6 +99,14 @@ export default class ParsingTextbox extends
                 <Button className="parsing-textbox__save-button" size="sm" onClick={this.onClick} disabled={readOnly}>
                   Save
                 </Button>
+                <Button
+                  className="parsing-textbox__publish-button"
+                  size="sm"
+                  onClick={this.onClick}
+                  disabled={readOnly}
+                >
+                  Publish
+                </Button>
               </Col>
             </Row>
           </FormGroup>

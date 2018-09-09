@@ -26,10 +26,10 @@ export class User {
   bio: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdTime: number;
+  createdTime: Date;
 
   @OneToMany(type => Entry, entry => entry.author, { onDelete: 'CASCADE' })
-  entries: Entry[];
+  entries: Promise<Entry[]>;
 
   @ManyToMany(type => Tag, { onDelete: 'CASCADE' })
   @JoinTable()

@@ -2,7 +2,7 @@ import { put, takeLatest, select } from 'redux-saga/effects';
 
 import { CommonActions } from '../../common/actions';
 import { ContentActions } from '../actions';
-import { getEntryInfo, getLatestDraft } from '../selectors';
+import { getEntryInfo, getLatestDraft, getAllDrafts } from '../selectors';
 import { ClientReduxStore } from '../../types';
 
 // TODO: merge server-side entities, redux store, saga/action types
@@ -28,14 +28,6 @@ interface Entry {
   text: string;
   title: string;
   published?: boolean;
-}
-
-function putSaveEntry(data: object) {
-  console.log(data);
-  put({
-    type: ContentActions.SAVE_ENTRY_FROM_SERVER_SUCCESS,
-    payload: data
-  });
 }
 
 const putErrorEntry = (data: object) => put({
@@ -66,7 +58,7 @@ function* loadEntries() {
   yield put({
     type: CommonActions.FETCH_FROM_SERVER,
     payload: {
-      endpoint: `users/${userInfo.id}/entries?includeDrafts=true`,
+      endpoint: `users/${userInfo.id}/entries?includeDrafts=true&length=0`,
       method: 'GET',
       onSuccessActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_SUCCESS,
       onHttpErrorActionType: ContentActions.LOAD_ENTRIES_FROM_SERVER_FAILURE,
@@ -78,13 +70,14 @@ function* loadEntries() {
 interface UpdateEntryAction {
   type: string;
   payload: {
+    date: number;
     title: string;
     text: string;
+    publish?: boolean;
   };
 }
 
 function* updateEntry(action: UpdateEntryAction) {
-  yield console.log('TODO');
   const entryId = yield select(getLatestDraft);
 
   yield put({
@@ -100,6 +93,53 @@ function* updateEntry(action: UpdateEntryAction) {
       onHttpErrorActionType: ContentActions.UPDATE_ENTRY_ON_SERVER_FAILURE,
       onOtherErrorActionType: ContentActions.UPDATE_ENTRY_ON_SERVER_FAILURE,
     }
+  });
+}
+
+function* publishEntry(action: UpdateEntryAction) {
+  yield console.log('TODO');
+  const entryId = yield select(getLatestDraft);
+  // const entryContent = yield select(getEntryInfo);
+  const date = action.payload.date ? {} : { date: Date.now() };
+  const newEntryContent = {
+    ...action.payload,
+    ...date,
+    publish: true
+  };
+  
+  yield put({
+    // TODO: rename FETCH_FROM_SERVER, this isn't quite what it does
+    type: CommonActions.FETCH_FROM_SERVER,
+    payload: {
+      endpoint: `entries/${entryId}`,
+      method: 'PATCH',
+      body: newEntryContent,
+
+      // TODO: the on____ is boilerplate, maybe wrap this in a function to fix
+      onSuccessActionType: ContentActions.PUBLISH_ENTRY_ON_SERVER_SUCCESS,
+      onHttpErrorActionType: ContentActions.PUBLISH_ENTRY_ON_SERVER_FAILURE,
+      onOtherErrorActionType: ContentActions.PUBLISH_ENTRY_ON_SERVER_FAILURE,
+    }
+  });
+
+  yield put({
+    type: ContentActions.MOVE_DRAFT_TO_PUBLISHED,
+    payload: {
+      entries: [
+        {
+          ...newEntryContent,
+          entryId,
+        }
+      ]
+    }
+  });
+}
+
+function* updateLatestDraftAfterPublish() {
+  const drafts = yield select(getAllDrafts);
+  yield put({
+    type: ContentActions.UPDATE_LATEST_DRAFT_AFTER_PUBLISH,
+    payload: Object.keys(drafts.items).map(key => drafts.itmes[key])
   });
 }
 
@@ -137,6 +177,14 @@ export function* watchUpdateEntry() {
   yield takeLatest(ContentActions.UPDATE_ENTRY, updateEntry);
 }
 
+export function* watchPublishEntry() {
+  yield takeLatest(ContentActions.PUBLISH_ENTRY_ON_SERVER, publishEntry);
+}
+
 export function* watchInitializeStore() {
   yield takeLatest(ContentActions.INITIALIZE_STORE, initializeStore);
+}
+
+export function* watchMoveDraftToPublished() {
+  yield takeLatest(ContentActions.MOVE_DRAFT_TO_PUBLISHED, updateLatestDraftAfterPublish);
 }

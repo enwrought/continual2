@@ -6,7 +6,8 @@ import {
   watchLoadEntries,
   watchUpdateEntry,
   watchInitializeStore,
-  watchFinishLoadFromServer
+  watchFinishLoadFromServer,
+  watchPublishEntry
 } from './entry';
 
 export function* diarySaga() {
@@ -15,6 +16,7 @@ export function* diarySaga() {
     watchNewEntry(),
     watchLoadEntries(),
     watchUpdateEntry(),
+    watchPublishEntry(),
     watchInitializeStore(),
     watchFinishLoadFromServer()
   ]);
