@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as cx from 'classnames';
 
-// TODO: autocomplete
+// TODO: STORY autocomplete
 interface UsertagProps {
   userName: string;
   className?: string;
@@ -44,7 +44,7 @@ export const UserComponent: React.SFC<UsertagProps> = (props: UsertagProps) => {
   const { userName, className } = props;
   const tagUrl = `/${USER_URL_PREFIX}/${userName}`;
 
-  // TODO: should we do a lookup to get the real name?
+  // TODO: INVESTIGATE should we do a lookup to get the real name?
 
   return (
     <Link to={tagUrl}>{userName}</Link>
