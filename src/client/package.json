@@ -14,6 +14,7 @@
   "dependencies": {
     "bootstrap": "^4.1.1",
     "classnames": "^2.2.6",
+    "googleapis": "^33.0.0",
     "immutable": "^3.8.2",
     "lib": "^0.0.1",
     "moment": "^2.22.2",
@@ -35,6 +36,7 @@
     "@types/classnames": "^2.2.4",
     "@types/dotenv": "^4.0.3",
     "@types/es6-promise": "^3.3.0",
+    "@types/gapi": "^0.0.36",
     "@types/html-webpack-plugin": "^2.30.3",
     "@types/html-webpack-template": "^6.0.3",
     "@types/immutable": "^3.8.7",

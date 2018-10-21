@@ -12,7 +12,8 @@ interface Param {
 interface Page extends RouteComponentProps<Param> {
 }
 
-// TODO: connect to redux and list all entries in store with tag
+// TODO: TASK connect to redux and list all entries in store with tag
+// TODO: STORY implement as a popup side-panel with more information, ie: drill-down
 export const UserPage: React.SFC<Page> = (props: Page) => {
   const userName = props.match.params['0'];
 
