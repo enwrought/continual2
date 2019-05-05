@@ -1,80 +1,149 @@
-import { google } from 'googleapis';
+import { AxiosResponse } from 'axios';
+import { google, calendar_v3 } from 'googleapis';
+import { Injectable } from '@nestjs/common';
 
-import User from '../entities/User';
+import { User } from '../entities/User';
 import { CalendarService, CalendarInfo, EventInfo } from './CalendarService';
+import { GoogleAuthService } from './GoogleAuthService';
+// import { BodyResponseCallback } from 'googleapis-common';
+// import { ENGINE_METHOD_NONE } from 'constants';
 
-export class GoogleCalendarService implements CalendarService<CalendarInfo, EventInfo> {
+interface GetCalendarsResult {
+  calendars: calendar_v3.Schema$CalendarListEntry[];
+  syncToken: string;
+}
+
+interface GetCalendar {
+  calendarId: string;
+  title: string;
+  description: string;
+}
+
+interface GetEvents {
+  calendarEvents: calendar_v3.Schema$Event[];
+  syncToken: string;
+}
+
+// Possible scopes:
+// https://www.googleapis.com/auth/calendar	Manage your calendars
+// https://www.googleapis.com/auth/calendar.events	View and edit events on all your calendars
+// https://www.googleapis.com/auth/calendar.events.readonly	View events on all your calendars
+// https://www.googleapis.com/auth/calendar.readonly	View your calendars
+// https://www.googleapis.com/auth/calendar.settings.readonly	View your Calendar settings
+// See https://developers.google.com/identity/protocols/googlescopes#calendarv3 for more info
+const SCOPES = [
+  'https://www.googleapis.com/auth/calendar',
+  'https://www.googleapis.com/auth/calendar.events'
+];
+
+/**
+ * On server side, we save all calendar info from the user.
+ * We can optionally poll every once in a while for the changes to the Google calendar.
+ * However, we should have at least 3 endpoints for the user:
+ * 1. Store any info needed to get a calendar token from Google
+ * 2. Retrieve Google calendar events saved on the server
+ * 3. Update the server with the latest information from Google and return the replacement/diff.
+ *
+ * TODO: STORY - since we are given "patches" from Google, we should try to eventually use the
+ * algorithm to handle it, at least on the server side. On client, we can just replace and maybe
+ * cache.
+ */
+@Injectable()
+ export class GoogleCalendarService implements CalendarService<CalendarInfo, EventInfo> {
   // TODO: THIS STORY - figure out if we can re-use the same Google Calendar instance
   // for different users/authorizations? otherwise we need to rethink this
 
-  constructor() {
-    super();
-    this.calendar = new google.calendar({ version: 'v3' });
+  calendar: calendar_v3.Calendar;
+  authService: GoogleAuthService;
+
+  constructor(private readonly googleAuthService: GoogleAuthService) {
+    this.calendar = google.calendar({ version: 'v3' });
+    this.authService = googleAuthService;
   }
-  addCalendar(user: User, calendarInfo: CalendarInfo) {
-    return new Promise();
+
+  async addCalendar(user: User, calendarInfo: CalendarInfo): Promise<CalendarInfo> {
+    return calendarInfo;
+  }
+
+  getGoogleAuthUrl(redirectUri: string = 'http://localhost:3000') {
+    return this.authService.getRequestUrl(redirectUri, SCOPES);
   }
 
   // TODO: Auth client or API Key for the request
   // auth?: string|OAuth2Client|JWT|Compute|UserRefreshClient;
-  async getCalendar(auth: string, calendarId: string) {
+  async getCalendar(auth: string, calendarId: string): Promise<GetCalendar> {
     return await this.calendar.calendars.get(
       { auth, calendarId }
     ).then(calendar => ({
-      title: calendar.summary || '',
-      description: calendar.description || ''
+      calendarId,
+      title: calendar.data.summary || '',
+      description: calendar.data.description || '',
     }));
   }
 
   // TODO: STORY - Update from saved sync token
-  async getCalendars(auth: string, savedSyncToken?: string) {
+  async getCalendars(auth: string, savedSyncToken?: string): Promise<GetCalendarsResult> {
     // TODO: use savedSyncToken
-    let token = '';
-    let syncToken = '';
-    const calendars = [];
+    let token: string | undefined;
+    let syncToken: string | undefined;
+    const calendars: calendar_v3.Schema$CalendarListEntry[] = [];
     do {
-      await this.addCalendar.calendarList.list({
-        // TODO: options
-        maxSize: 2500,
-      }).then((calendarList) => {
-        const { items, nextPageToken, nextSyncToken } = calendarList;
-        calnedars += items;
+      // const tmp: BodyResponseCallback<calendar_v3.Schema$CalendarList>;
+      google.calendar('v3').calendarList.list(
+        {
+          // TODO: options
+          auth,
+          maxResults: 2500,
+        }
+      ).then((calendarList) => {
+        // items: CalendarListEntry[]
+        const { items, nextPageToken, nextSyncToken } = calendarList.data;
+        calendars.concat(items || []);
         token = nextPageToken;
         syncToken = nextSyncToken;
       });
     } while (token);
 
-    // TODO: what is the return signature of this?
-    return {
-      syncToken,
-      calendars
-    };
+    // Google API docs say that either the nextPageToken or nextSyncToken are defined
+    // If we exit this loop, we must have a sync token,
+
+    // TODO: what should be the return signature of this?
+    if (syncToken) {
+      return {
+        syncToken,
+        calendars
+      };
+    }
+    throw Error('Failed to get sync token');
   }
 
-  async getEvents(auth: string, calendarId: string, savedSyncToken?: string) {
-    let token = '';
-    let syncToken = '';
+  async getEvents(auth: string, calendarId: string, savedSyncToken?: string): Promise<GetEvents> {
+    let token: string | undefined;
+    let syncToken: string | undefined;
 
-    const calendarEvents = [];
+    const calendarEvents: calendar_v3.Schema$Event[] = [];
     do {
-      await this.addCalendar.events.list({
+      await this.calendar.events.list({
         // TODO: options
         calendarId,
-        maxSize: 2500,
+        maxResults: 2500,
         // timezone
         // syncToken: savedSyncToken (?????)
-      }).then((eventsWrapper) => {
-        const { events, nextPageToken, nextSyncToken } = eventsWrapper;
-        calendarEvents += events;
+      }).then((eventsWrapper: AxiosResponse<calendar_v3.Schema$Events>) => {
+        const { items, nextPageToken, nextSyncToken } = eventsWrapper.data;
+        calendarEvents.concat(items || []);
         token = nextPageToken;
         syncToken = nextSyncToken;
       });
     } while (token);
 
-    return {
-      calendarEvents,
-      syncToken
-    };
+    if (syncToken) {
+      return {
+        calendarEvents,
+        syncToken
+      };
+    }
+    throw new Error('Failed to get sync token.');
   }
 
   /**
@@ -84,11 +153,14 @@ export class GoogleCalendarService implements CalendarService<CalendarInfo, Even
    * We also need to return info to update any info next
    * @param calendarId Id of the calendar
    */
-  refreshCalendar(calendarId: string, syncToken?: string) {
-    if (!syncToken) {
-      // Do full sync
-      return this.fullSync(calendarId);
-    }
+  refreshCalendar(calendarId: string, syncToken: string) {
+    // if (!syncToken) {
+    //   // Do full sync
+    //   // TODO: send the auth instead of syncToken
+    //   // return this.fullSync(calendarId, syncToken);
+    //   return {};
+    // }
+
     // private static void run() throws IOException {
     //   // Construct the {@link Calendar.Events.List} request, but don't execute it yet.
     //   Calendar.Events.List request = client.events().list("primary");
@@ -145,10 +217,55 @@ export class GoogleCalendarService implements CalendarService<CalendarInfo, Even
   
     //   System.out.println("Sync complete.");
     // }
-  
-    return new Promise();
+    //
+
+    // TODO: otherwise, do partial sync
+    const dummyCalendarInfo: CalendarInfo = {
+      name: 'asjdkfl',
+      link: 'asdjkfl',
+    };
+    return Promise.resolve(dummyCalendarInfo);
   }
+
   addEvent(calendarId: string, eventInfo: EventInfo) {
-    return new Promise();
+    // TODO: implement
+    return Promise.resolve(false);
+  }
+
+  // TODO: THIS STORY - sync color too from Google
+  private async fullSync(user: User, auth: string) {
+    const { syncToken, calendars } = await this.getCalendars(auth);
+
+    const calendarInfoPromises: Promise<GetCalendar>[] = [];
+    const eventsPromises: Promise<GetEvents>[] = [];
+    const calendarObjs = calendars.forEach((calendar: calendar_v3.Schema$CalendarListEntry) => {
+      if (!calendar.id) {
+        throw new Error('Missing calendar id');
+      }
+      calendarInfoPromises.push(this.getCalendar(auth, calendar.id));
+      eventsPromises.push(this.getEvents(auth, calendar.id));
+    });
+    // return Promise.all(calendarInfoPromises).then((calObjs) => {
+    //   return calObjs.map((calObj) => {
+    //     return calObj.calendarInfo.then((calInfo) => {
+    //       return calObj.events.then(events => ({
+    //         events,
+    //         ...calInfo
+    //       }));
+    //     });
+    //   });
+    // });
+    return Promise.all([
+      Promise.all(calendarInfoPromises),
+      Promise.all(eventsPromises),
+    ]).then(([calendarInfo, events]: [GetCalendar[], GetEvents[]]) => {
+      // assert(calendarInfo.length === events.length, 'Lengths of calendarInfo and events are not the same!');
+      return calendarInfo.map((value: GetCalendar, i) => {
+        return {
+          ...value,
+          ...events[i],
+        };
+      });
+    });
   }
 }

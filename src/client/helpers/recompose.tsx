@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { withProps } from 'recompose';
 
-const withGrid = <T extends {}>(BaseComponent: React.SFC<T>) => {
-  // TODO: implement this Grid wrapper?
-  // TODO: implement this as a render prop?
-  return null;
-};
-
 // TODO: HOC to render a specific component type of component if it does not exist
 
 /**
@@ -25,50 +19,86 @@ export const toReactFragments = <T extends {}>(BaseComponent: React.SFC<T>) => {
   );
 };
 
-// TODO: this makes more sense as a separate class instead of HOC enhancer
+export interface WithDelayProps {
+  onTimerAction: () => void;
+}
+
 /**
  * Adds a prop `onLatestUpdate`, which triggers if there has been no more action after `delay` seconds
  * @param delay 
  */
-export const withDelay = <T extends {}>(propFnName: string, delay: number) => 
-  (BaseComponent: React.ComponentClass<T>) => {
-    class WrappedComponent extends React.Component<T> {
-      timer = 0;
+// export const withDelay = <T extends WithDelayProps>(delay: number) => 
+//   (BaseComponent: React.ComponentClass<T, {}>) => {
+//     class WrappedComponent extends React.Component<T> {
+//       timer: NodeJS.Timeout | null = null;
 
-      constructor(props: T) {
-        super(props);
-        this.update = this.update.bind(this);
-      }
+//       constructor(props: T) {
+//         super(props);
+//         this.update = this.update.bind(this);
+//       }
 
-      update() {
-        console.log('Entering update()...');
+//       update() {
+//         console.log('Entering update()...');
 
-        const { [propFnName]: onLatestUpdate } = this.props;
-        if (this.timer) {
-          console.log(`Clearing timer ${this.timer}`);
-          clearTimeout(this.timer);
-          this.timer = 0;
-        }
-        this.timer = setTimeout(
-          () => {
-            console.log(`Executing onLatestUpdate with timer ${this.timer}...`);
-            onLatestUpdate.apply(null, arguments);
-            this.timer = 0;
-          },
-          delay
-        );
-      }
+//         const { onTimerAction } = this.props;
+//         if (this.timer) {
+//           console.log(`Clearing timer ${this.timer}`);
+//           clearTimeout(this.timer);
+//           this.timer = null;
+//         }
+//         this.timer = setTimeout(
+//           () => {
+//             console.log(`Executing onLatestUpdate with timer ${this.timer}...`);
+//             onTimerAction.apply(null, arguments);
+//             this.timer = null;
+//           },
+//           delay
+//         );
+//       }
 
-      render() {
-        // Spread does not work with generics in typescript
-        const otherProps = Object.assign({}, this.props);
-        delete otherProps[propFnName];
+//       render() {
+//         return (
+//           <BaseComponent
+//             {...this.props}
+//             onTimerAction={this.update}
+//           />
+//         );
+//       }
+//     }
+//     return WrappedComponent;
+//   };
 
-        const updateProps = { [propFnName]: this.update };
-        return (
-          <BaseComponent {...otherProps} {...updateProps} />
-        );
-      }
+export interface WithDelayProps {
+  delay: number;
+  onTimerAction: () => void;
+  render: () => React.ReactNode;
+}
+
+export class WithDelay extends React.PureComponent<WithDelayProps, {}> {
+  timer: number = 0;
+
+  update() {
+    const { delay, onTimerAction } = this.props;
+
+    console.log('Entering update()...');
+    if (this.timer) {
+      console.log(`Clearing timer ${this.timer}`);
+      clearTimeout(this.timer);
+      this.timer = 0;
     }
-    return WrappedComponent;
-  };
+
+    // TODO: vscode uses NodeJS syntax highlighting, figure out how to switch to browser
+    this.timer = setTimeout(
+      () => {
+        console.log(`Executing onLatestUpdate with timer ${this.timer}...`);
+        onTimerAction.apply(null, arguments);
+        this.timer = 0;
+      },
+      delay
+    );
+  }
+
+  render() {
+    return this.props.render();
+  }
+}

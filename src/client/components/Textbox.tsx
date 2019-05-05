@@ -6,12 +6,13 @@ import { compose, withState, withHandlers } from 'recompose';
 import { Hashtag, Size, Parser } from 'lib';
 
 import { HashtagComponent } from './HashtagComponent';
-import { withDelay } from '../helpers';
+// import { withDelay, WithDelayProps } from '../helpers';
+import { WithDelay, WithDelayProps } from '../helpers';
 import { UserComponent } from './UserComponent';
 
 interface TextboxProps {
   initValue?: string;
-  classNames?: string;
+  className?: string;
   readOnly?: boolean;
   onUpdate: (text: string) => void;
   onPressEnter: (text: string) => void;
@@ -26,7 +27,7 @@ interface TextboxState {
   value: string;
   time: number;
 }
-class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
+export class Textbox extends React.PureComponent<TextboxProps, TextboxState> {
 
   state = {
     value: this.props.initValue || '',
@@ -51,6 +52,10 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
     }
   }
 
+  onDelayHandler = () => {
+    this.props.onUpdate(this.state.value);
+  }
+
   // TODO: also handle ID of the textbox in case it changes?
   static getDerivedStateFromProps(props: TextboxProps, state: TextboxState) {
     if (props.updateTime && props.initValue && props.updateTime > state.time) {
@@ -63,7 +68,17 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
   }
 
   render() {
-    const { classNames, readOnly = false, ...otherProps } = this.props;
+    return (
+      <WithDelay
+        render={() => this.renderContent()}
+        delay={2500}
+        onTimerAction={this.onDelayHandler}
+      />
+    );
+  }
+
+  private renderContent() {
+    const { className, readOnly = false, ...otherProps } = this.props;
     const { value } = this.state;
 
     // TODO: Maybe better to parse out hashtags and users somewhere else
@@ -84,7 +99,7 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
       }
     });
 
-    const combinedClassNames = cx('textbox', classNames);
+    const combinedClassNames = cx('textbox', className);
 
     // TODO: add something to allow handling "Enter" key
     return (
@@ -110,9 +125,8 @@ class TextboxChild extends React.PureComponent<TextboxProps, TextboxState> {
   }
 }
 
-// TODO: correct inner/outer generic types
-const enhance = compose<TextboxProps, TextboxProps>(
-  withDelay<TextboxProps>('onUpdate', 2500)
-);
+// const enhance = compose<TextboxProps, TextboxProps>(
+//   withDelay<TextboxProps & WithDelayProps>(2500)
+// );
 
-export const Textbox = enhance(TextboxChild);
+// export const Textbox = enhance(TextboxChild);

@@ -7,5 +7,5 @@ export class ImportCalendarDTO {
   readonly token: string;
 
   @ApiModelProperty()
-  readonly calendarName: string;
+  readonly calendarId: string;
 }

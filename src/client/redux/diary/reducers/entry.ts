@@ -42,7 +42,6 @@ const draftsReducerMap = {
   [ContentActions.UPDATE_LATEST_DRAFT_AFTER_PUBLISH]: (
     state: EntryStoreRecord, action: RetrieveEntriesFromServerAction
   ) => {
-    console.log('hi');
     const items = state.getIn(['items']);
     delete items[action.payload.entries[0].entryId];
     // TODO: this is not right, it should not need to have to setIn

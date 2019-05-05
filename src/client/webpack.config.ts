@@ -110,10 +110,10 @@ const config: webpack.Configuration[] = [{
   //   'react-dom': 'ReactDOM'
   // },
 
-  devServer: {
-    historyApiFallback: true,
-    hot: true
-  }
+  // devServer: {
+  //   historyApiFallback: true,
+  //   hot: true
+  // }
 }];
 
 export default config;
