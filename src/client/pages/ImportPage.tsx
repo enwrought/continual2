@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { GoogleCalendarImporter } from '../helpers/calendar';
-// import { UserComponent } from '../components';
+import { RouteComponentProps } from 'react-router-dom';
 
 // TODO: export this somewhere
 
@@ -26,9 +24,7 @@ interface Page extends RouteComponentProps<Param> {
 // };
 
 export class ImportPage extends React.PureComponent<Param> {
-  constructor() {
-    this.importer = new GoogleCalendarImporter();
-  }
+  // importer = new GoogleCalendarImporter();
 
   render() {
     return (

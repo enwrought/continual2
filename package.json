@@ -16,10 +16,10 @@
   "author": "Bryant Lin",
   "license": "MIT",
   "devDependencies": {
-    "lerna": "^2.11.0",
-    "tslint": "^5.10.0",
-    "tslint-config-airbnb": "^5.9.2",
-    "typescript": "^3.0.1"
+    "lerna": "^3.13.3",
+    "tslint": "^5.15.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.4.3"
   },
   "dependencies": {}
 }
