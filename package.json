@@ -5,7 +5,8 @@
   "main": "./dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tslint": "tslint"
+    "tslint": "tslint",
+    "bootstrap": "lerna bootstrap && lerna bootstrap --hoist"
   },
   "keywords": [
     "tag",
@@ -16,7 +17,7 @@
   "author": "Bryant Lin",
   "license": "MIT",
   "devDependencies": {
-    "lerna": "^3.13.3",
+    "lerna": "^3.13.4",
     "tslint": "^5.15.0",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.4.3"

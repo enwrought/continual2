@@ -1,0 +1,8 @@
+# Edit and save as /src/server/.env
+host='localhost'
+database='diary'
+username='dbuser'
+password='temporaryP@ssw0rd'
+googleAuth='AIzaSyDFsEbIcgBJ0xllRz98j-mWD6XY-420KIw'
+googleClientId='652623741098-50a1d2rqgusdrdq19bhfcpm6l2bjpvma.apps.googleusercontent.com'
+googleClientSecret='U6ncPPx6BBl7qAngmekKX-xq'
