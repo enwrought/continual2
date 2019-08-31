@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
 
-import { MainPage, TagPage, UserPage, ImportPage } from '../pages';
+import { MainPage, TagPage, UserPage, ImportPage, RedirectPage } from '../pages';
 
 export const AppMain: React.SFC = () => {
   return (
@@ -10,6 +9,7 @@ export const AppMain: React.SFC = () => {
       <Switch>
         <Route exact={true} path="/" component={MainPage} />
         <Route exact={true} path="/tags" component={TagPage} />
+        <Route exact={true} path="/receive" component={RedirectPage} />
         <Route path="/import" component={ImportPage} />
         <Route path="/import/**" component={ImportPage} />
         <Route path="/tags/**" component={TagPage} />

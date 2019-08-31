@@ -78,7 +78,7 @@ export class UserController {
   @Get(':id/auth')
   async getGoogleAuthURL(@Param('id') id: string) {
     console.log({ id, action: 'getGoogleAuthURL' });
-    return this.calendarService.getGoogleAuthUrl('http://localhost:3000/receive');
+    return this.calendarService.getGoogleAuthUrl('http://localhost:8080/receive');
   }
  
   @ApiOperation({ title: 'Make a call to start synchronize with Google Calendar.' })

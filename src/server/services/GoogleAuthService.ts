@@ -26,12 +26,13 @@ export class GoogleAuthService {
     accessType: AccessType = 'offline',
     includeGrantedScopes: boolean = true,
     responseType: string = 'code',
-    state?: string,
+    state = '',
   ): URL {
     const scope = scopes.join(' ');
     const queryParams = {
       scope,
       state,
+      include_granted_scopes: includeGrantedScopes,
       access_type: accessType,
       client_id: this.clientId,
       redirect_uri: redirectUri,
